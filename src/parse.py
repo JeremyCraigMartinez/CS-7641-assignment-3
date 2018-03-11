@@ -1,38 +1,28 @@
+from os.path import dirname, realpath
 import pandas as pd
-import numpy as np
-from sklearn.datasets import load_digits
-import os
-import sklearn.model_selection as ms
 
-OUT = './OUTPUT/BASE/'
-cancer = pd.read_csv('./data/kag_risk_factors_cervical_cancer.csv',header=None,sep=',')
-reviews = pd.read_csv('./data/Restaurant_Reviews.tsv.data',header=None,sep='\t')
+from helpers.health_data_preprocessing import get_train_test_set as h_get_data
+from helpers.reviews_preprocessing import get_train_test_set as r_get_data
 
-c_train_X, c_test_X, c_train_y, c_test_y = ms.train_test_split(madX, madY, test_size=0.2, random_state=0, stratify=madY)
+dir_path = dirname(realpath(__file__))
 
-madX = pd.DataFrame(madelon_trgX)
-madY = pd.DataFrame(madelon_trgY)
-madY.columns = ['Class']
+OUT = '{}/../OUTPUT/BASE'.format(dir_path)
 
-madX2 = pd.DataFrame(madelon_tstX)
-madY2 = pd.DataFrame(madelon_tstY)
-madY2.columns = ['Class']
+h_train_X, h_test_X, h_train_y, h_test_y = h_get_data()
+r_train_X, r_test_X, r_train_y, r_test_y = r_get_data()
 
-mad1 = pd.concat([madX,madY],1)
-mad1 = mad1.dropna(axis=1,how='all')
-mad1.to_hdf(OUT+'datasets.hdf','madelon',complib='blosc',complevel=9)
+def build_hdf(_X, _y, name):
+    X = pd.DataFrame(_X)
+    y = pd.DataFrame(_y)
+    y.columns = ['Class']
 
-mad2 = pd.concat([madX2,madY2],1)
-mad2 = mad2.dropna(axis=1,how='all')
-mad2.to_hdf(OUT+'datasets.hdf','madelon_test',complib='blosc',complevel=9)
+    data = pd.concat([X, y], 1)
+    data = data.dropna(axis=1, how='all')
+    data.to_hdf('{}/datasets.hdf'.format(OUT), name, complib='blosc', complevel=9)
 
-digits = load_digits(return_X_y=True)
-digitsX,digitsY = digits
+if __name__ == '__main__':
+    build_hdf(h_train_X, h_train_y, 'cancer_train')
+    build_hdf(h_test_X, h_test_y, 'cancer_test')
 
-digits = np.hstack((digitsX, np.atleast_2d(digitsY).T))
-digits = pd.DataFrame(digits)
-cols = list(range(digits.shape[1]))
-cols[-1] = 'Class'
-digits.columns = cols
-digits.to_hdf(OUT+'datasets.hdf','digits',complib='blosc',complevel=9)
-
+    build_hdf(r_train_X, r_train_y, 'reviews_train')
+    build_hdf(r_test_X, r_test_y, 'reviews_test')

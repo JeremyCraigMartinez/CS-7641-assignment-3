@@ -36,7 +36,7 @@ def get_X_Y(corpus, dataset):
 # Splitting the dataset into the Training set and Test set
 def get_train_test_set():
     # Importing the dataset
-    dataset = pd.read_csv(dir_path + '/../../data/Restaurant_Reviews.tsv', delimiter='\t', quoting=3)
+    dataset = pd.read_csv('{}/../../data/Restaurant_Reviews.tsv'.format(dir_path), delimiter='\t', quoting=3)
 
     corpus = get_corpus(dataset)
     X, y = get_X_Y(corpus, dataset)

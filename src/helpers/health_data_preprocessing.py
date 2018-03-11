@@ -104,7 +104,7 @@ def get_X_Y(dataset):
     return X, y
 
 def get_train_test_set():
-    dataset = pd.read_csv(dir_path + '/../../data/kag_risk_factors_cervical_cancer.csv')
+    dataset = pd.read_csv('{}/../../data/kag_risk_factors_cervical_cancer.csv'.format(dir_path))
     cleaned_data = clean(dataset)
 
     X, y = get_X_Y(cleaned_data)
