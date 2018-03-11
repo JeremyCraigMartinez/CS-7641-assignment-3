@@ -13,15 +13,15 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.random_projection import SparseRandomProjection, GaussianRandomProjection
 from itertools import product
 
-out = './RP/'
-cmap = cm.get_cmap('Spectral') 
+out = './OUTPUT/RP/'
+cmap = cm.get_cmap('Spectral')
 
 np.random.seed(0)
-digits = pd.read_hdf('./BASE/datasets.hdf','digits')
+digits = pd.read_hdf('./OUTPUT/BASE/datasets.hdf','digits')
 digitsX = digits.drop('Class',1).copy().values
 digitsY = digits['Class'].copy().values
 
-madelon = pd.read_hdf('./BASE/datasets.hdf','madelon')        
+madelon = pd.read_hdf('./OUTPUT/BASE/datasets.hdf','madelon')
 madelonX = madelon.drop('Class',1).copy().values
 madelonY = madelon['Class'].copy().values
 
@@ -53,7 +53,7 @@ tmp.to_csv(out+'digits scree1.csv')
 tmp = defaultdict(dict)
 for i,dim in product(range(10),dims):
     rp = SparseRandomProjection(random_state=i, n_components=dim)
-    rp.fit(madelonX)    
+    rp.fit(madelonX)
     tmp[dim][i] = reconstructionError(rp, madelonX)
 tmp =pd.DataFrame(tmp).T
 tmp.to_csv(out+'madelon scree2.csv')
@@ -62,7 +62,7 @@ tmp.to_csv(out+'madelon scree2.csv')
 tmp = defaultdict(dict)
 for i,dim in product(range(10),dims):
     rp = SparseRandomProjection(random_state=i, n_components=dim)
-    rp.fit(digitsX)  
+    rp.fit(digitsX)
     tmp[dim][i] = reconstructionError(rp, digitsX)
 tmp =pd.DataFrame(tmp).T
 tmp.to_csv(out+'digits scree2.csv')
@@ -70,7 +70,7 @@ tmp.to_csv(out+'digits scree2.csv')
 #%% Data for 2
 
 grid ={'rp__n_components':dims,'NN__alpha':nn_reg,'NN__hidden_layer_sizes':nn_arch}
-rp = SparseRandomProjection(random_state=5)       
+rp = SparseRandomProjection(random_state=5)
 mlp = MLPClassifier(activation='relu',max_iter=2000,early_stopping=True,random_state=5)
 pipe = Pipeline([('rp',rp),('NN',mlp)])
 gs = GridSearchCV(pipe,grid,verbose=10,cv=5)
@@ -81,7 +81,7 @@ tmp.to_csv(out+'Madelon dim red.csv')
 
 
 grid ={'rp__n_components':dims,'NN__alpha':nn_reg,'NN__hidden_layer_sizes':nn_arch}
-rp = SparseRandomProjection(random_state=5)           
+rp = SparseRandomProjection(random_state=5)
 mlp = MLPClassifier(activation='relu',max_iter=2000,early_stopping=True,random_state=5)
 pipe = Pipeline([('rp',rp),('NN',mlp)])
 gs = GridSearchCV(pipe,grid,verbose=10,cv=5)

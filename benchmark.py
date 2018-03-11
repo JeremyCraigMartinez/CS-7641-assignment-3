@@ -14,13 +14,13 @@ from helpers import   nn_arch,nn_reg
 from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import GridSearchCV
 
-out = './BASE/'
+out = './OUTPUT/BASE'
 np.random.seed(0)
-digits = pd.read_hdf('./BASE/datasets.hdf','digits')
+digits = pd.read_hdf('{}/datasets.hdf'.format(out),'digits')
 digitsX = digits.drop('Class',1).copy().values
 digitsY = digits['Class'].copy().values
 
-madelon = pd.read_hdf('./BASE/datasets.hdf','madelon')        
+madelon = pd.read_hdf('{}/datasets.hdf'.format(out),'madelon')
 madelonX = madelon.drop('Class',1).copy().values
 madelonY = madelon['Class'].copy().values
 
@@ -37,7 +37,7 @@ gs = GridSearchCV(pipe,grid,verbose=10,cv=5)
 
 gs.fit(madelonX,madelonY)
 tmp = pd.DataFrame(gs.cv_results_)
-tmp.to_csv(out+'Madelon NN bmk.csv')
+tmp.to_csv(out+'/Madelon NN bmk.csv')
 
 
 mlp = MLPClassifier(activation='relu',max_iter=2000,early_stopping=True,random_state=5)
@@ -46,5 +46,5 @@ gs = GridSearchCV(pipe,grid,verbose=10,cv=5)
 
 gs.fit(digitsX,digitsY)
 tmp = pd.DataFrame(gs.cv_results_)
-tmp.to_csv(out+'digits NN bmk.csv')
+tmp.to_csv(out+'/digits NN bmk.csv')
 raise

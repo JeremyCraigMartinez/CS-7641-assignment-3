@@ -8,24 +8,24 @@ Created on Wed Mar 15 10:39:27 2017
 import pandas as pd
 import numpy as np
 from sklearn.datasets import load_digits
-import os 
+import os
 import sklearn.model_selection as ms
 
 for d in ['BASE','RP','PCA','ICA','RF']:
-    n = './{}/'.format(d)
+    n = './OUTPUT/{}/'.format(d)
     if not os.path.exists(n):
         os.makedirs(n)
 
-OUT = './BASE/'
-madX1 = pd.read_csv('./madelon_train.data',header=None,sep=' ')
-madX2 = pd.read_csv('./madelon_valid.data',header=None,sep=' ')
+OUT = './OUTPUT/BASE/'
+madX1 = pd.read_csv('./data/madelon_train.data',header=None,sep=' ')
+madX2 = pd.read_csv('./data/madelon_valid.data',header=None,sep=' ')
 madX = pd.concat([madX1,madX2],0).astype(float)
-madY1 = pd.read_csv('./madelon_train.labels',header=None,sep=' ')
-madY2 = pd.read_csv('./madelon_valid.labels',header=None,sep=' ')
+madY1 = pd.read_csv('./data/madelon_train.labels',header=None,sep=' ')
+madY2 = pd.read_csv('./data/madelon_valid.labels',header=None,sep=' ')
 madY = pd.concat([madY1,madY2],0)
 madY.columns = ['Class']
 
-madelon_trgX, madelon_tstX, madelon_trgY, madelon_tstY = ms.train_test_split(madX, madY, test_size=0.3, random_state=0,stratify=madY)     
+madelon_trgX, madelon_tstX, madelon_trgY, madelon_tstY = ms.train_test_split(madX, madY, test_size=0.3, random_state=0,stratify=madY)
 
 madX = pd.DataFrame(madelon_trgX)
 madY = pd.DataFrame(madelon_trgY)

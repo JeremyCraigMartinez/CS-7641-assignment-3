@@ -10,14 +10,14 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import GridSearchCV
 from sklearn.decomposition import FastICA
 
-out = './ICA/'
+out = './OUTPUT/ICA/'
 
 np.random.seed(0)
-digits = pd.read_hdf('./BASE/datasets.hdf','digits')
+digits = pd.read_hdf('./OUTPUT/BASE/datasets.hdf','digits')
 digitsX = digits.drop('Class',1).copy().values
 digitsY = digits['Class'].copy().values
 
-madelon = pd.read_hdf('./BASE/datasets.hdf','madelon')        
+madelon = pd.read_hdf('./OUTPUT/BASE/datasets.hdf','madelon')
 madelonX = madelon.drop('Class',1).copy().values
 madelonY = madelon['Class'].copy().values
 
@@ -39,7 +39,7 @@ for dim in dims:
     tmp = tmp.kurt(axis=0)
     kurt[dim] = tmp.abs().mean()
 
-kurt = pd.Series(kurt) 
+kurt = pd.Series(kurt)
 kurt.to_csv(out+'madelon scree.csv')
 
 
@@ -52,14 +52,14 @@ for dim in dims:
     tmp = tmp.kurt(axis=0)
     kurt[dim] = tmp.abs().mean()
 
-kurt = pd.Series(kurt) 
+kurt = pd.Series(kurt)
 kurt.to_csv(out+'digits scree.csv')
 raise
 
 #%% Data for 2
 
 grid ={'ica__n_components':dims,'NN__alpha':nn_reg,'NN__hidden_layer_sizes':nn_arch}
-ica = FastICA(random_state=5)       
+ica = FastICA(random_state=5)
 mlp = MLPClassifier(activation='relu',max_iter=2000,early_stopping=True,random_state=5)
 pipe = Pipeline([('ica',ica),('NN',mlp)])
 gs = GridSearchCV(pipe,grid,verbose=10,cv=5)
@@ -70,7 +70,7 @@ tmp.to_csv(out+'Madelon dim red.csv')
 
 
 grid ={'ica__n_components':dims,'NN__alpha':nn_reg,'NN__hidden_layer_sizes':nn_arch}
-ica = FastICA(random_state=5)       
+ica = FastICA(random_state=5)
 mlp = MLPClassifier(activation='relu',max_iter=2000,early_stopping=True,random_state=5)
 pipe = Pipeline([('ica',ica),('NN',mlp)])
 gs = GridSearchCV(pipe,grid,verbose=10,cv=5)

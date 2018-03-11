@@ -21,14 +21,14 @@ from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import GridSearchCV
 import sys
 
-out = './{}/'.format(sys.argv[1])
+out = './OUTPUT/{}/'.format(sys.argv[1])
 
 np.random.seed(0)
 digits = pd.read_hdf(out+'datasets.hdf','digits')
 digitsX = digits.drop('Class',1).copy().values
 digitsY = digits['Class'].copy().values
 
-madelon = pd.read_hdf(out+'datasets.hdf','madelon')        
+madelon = pd.read_hdf(out+'datasets.hdf','madelon')
 madelonX = madelon.drop('Class',1).copy().values
 madelonY = madelon['Class'].copy().values
 
@@ -53,12 +53,12 @@ for k in clusters:
     km.fit(madelonX)
     gmm.fit(madelonX)
     SSE[k]['Madelon'] = km.score(madelonX)
-    ll[k]['Madelon'] = gmm.score(madelonX)    
+    ll[k]['Madelon'] = gmm.score(madelonX)
     acc[k]['Madelon']['Kmeans'] = cluster_acc(madelonY,km.predict(madelonX))
     acc[k]['Madelon']['GMM'] = cluster_acc(madelonY,gmm.predict(madelonX))
     adjMI[k]['Madelon']['Kmeans'] = ami(madelonY,km.predict(madelonX))
     adjMI[k]['Madelon']['GMM'] = ami(madelonY,gmm.predict(madelonX))
-    
+
     km.fit(digitsX)
     gmm.fit(digitsX)
     SSE[k]['Digits'] = km.score(digitsX)
@@ -68,8 +68,8 @@ for k in clusters:
     adjMI[k]['Digits']['Kmeans'] = ami(digitsY,km.predict(digitsX))
     adjMI[k]['Digits']['GMM'] = ami(digitsY,gmm.predict(digitsX))
     print(k, clock()-st)
-    
-    
+
+
 SSE = (-pd.DataFrame(SSE)).T
 SSE.rename(columns = lambda x: x+' SSE (left)',inplace=True)
 ll = pd.DataFrame(ll).T
