@@ -12,6 +12,9 @@ from scipy.linalg import pinv
 nn_arch = [(50, 50),]
 nn_reg = [10**-x for x in range(1, 5)]
 
+clusters = [2, 5, 10, 15, 20, 25, 30, 35, 40]
+dims = [2, 5, 10, 15, 20, 25, 30, 35, 40]
+
 def cluster_acc(Y, clusterLabels):
     assert (Y.shape == clusterLabels.shape)
     pred = np.empty_like(Y)

@@ -31,24 +31,29 @@ def get_data(BASE):
 
     return ((r_X, r_y), (c_X, c_y),)
 
-def run_dim_alg(X, y, name, dim, dims, decomposition, OUT):
+def run_dim_alg(X, y, name, dims, decomposition, OUT, filt=False):
     grid = None
     if name == 'pca':
         grid = {'pca__n_components':dims, 'NN__alpha':nn_reg, 'NN__hidden_layer_sizes':nn_arch}
     elif name == 'ica':
         grid = {'ica__n_components':dims, 'NN__alpha':nn_reg, 'NN__hidden_layer_sizes':nn_arch}
+    elif name == 'rp':
+        grid = {'rp__n_components':dims, 'NN__alpha':nn_reg, 'NN__hidden_layer_sizes':nn_arch}
+    elif name == 'rf':
+        grid = {'filter__n':dims, 'NN__alpha':nn_reg, 'NN__hidden_layer_sizes':nn_arch}
 
-    decomp = decomposition(random_state=5)
+    decomp = decomposition[0]()
     mlp = MLPClassifier(activation='relu', max_iter=2000, early_stopping=True, random_state=5)
-    pipe = Pipeline([(name, decomp), ('NN', mlp)])
+    arg = (name, decomp) if filt is False else ('filter', decomp)
+    pipe = Pipeline([arg, ('NN', mlp)])
     gs = GridSearchCV(pipe, grid, verbose=10, cv=5)
 
     gs.fit(X, y)
     tmp = pd.DataFrame(gs.cv_results_)
     tmp.to_csv('{}/{} dim red.csv'.format(OUT, name))
 
-    decomp = decomposition(n_components=dim, random_state=10)
-    X2 = decomp.fit_transform(X)
+    decomp = decomposition[1]()
+    X2 = decomp.fit_transform(X, y)
     data2 = pd.DataFrame(np.hstack((X2, np.atleast_2d(y).T)))
     cols = list(range(data2.shape[1]))
     cols[-1] = 'Class'

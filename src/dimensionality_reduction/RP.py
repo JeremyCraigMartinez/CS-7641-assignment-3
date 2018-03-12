@@ -1,112 +1,66 @@
+from os.path import dirname, realpath
+from collections import defaultdict
+from itertools import product
+import sys
+from functools import partial
 
-
-#%% Imports
 import pandas as pd
 import numpy as np
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
-from collections import defaultdict
-from helpers import   pairwiseDistCorr,nn_reg,nn_arch,reconstructionError
-from matplotlib import cm
 from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import GridSearchCV
 from sklearn.random_projection import SparseRandomProjection, GaussianRandomProjection
-from itertools import product
+from matplotlib import cm
 
-out = './OUTPUT/RP/'
-cmap = cm.get_cmap('Spectral')
+dir_path = dirname(realpath(__file__))
+sys.path.insert(0, '{}/..'.format(dir_path))
 
-np.random.seed(0)
-digits = pd.read_hdf('./OUTPUT/BASE/datasets.hdf','digits')
-digitsX = digits.drop('Class',1).copy().values
-digitsY = digits['Class'].copy().values
+from helpers.clustering import pairwiseDistCorr, nn_reg, nn_arch, reconstructionError, clusters, dims
+from helpers.dim_reduction import run_dim_alg, get_data
 
-madelon = pd.read_hdf('./OUTPUT/BASE/datasets.hdf','madelon')
-madelonX = madelon.drop('Class',1).copy().values
-madelonY = madelon['Class'].copy().values
+OUT = '{}/../../OUTPUT/RP'.format(dir_path)
+BASE = '{}/../../OUTPUT/BASE'.format(dir_path)
 
-
-madelonX = StandardScaler().fit_transform(madelonX)
-digitsX= StandardScaler().fit_transform(digitsX)
-
-clusters =  [2,5,10,15,20,25,30,35,40]
-dims = [2,5,10,15,20,25,30,35,40,45,50,55,60]
-#raise
-#%% data for 1
+r, c = get_data(BASE)
+r_X, r_y = r
+c_X, c_y = c
 
 tmp = defaultdict(dict)
-for i,dim in product(range(10),dims):
+for i, dim in product(range(10), dims):
     rp = SparseRandomProjection(random_state=i, n_components=dim)
-    tmp[dim][i] = pairwiseDistCorr(rp.fit_transform(madelonX), madelonX)
+    tmp[dim][i] = pairwiseDistCorr(rp.fit_transform(r_X), r_X)
 tmp =pd.DataFrame(tmp).T
-tmp.to_csv(out+'madelon scree1.csv')
+tmp.to_csv('{}/review scree1.csv'.format(OUT))
 
 
 tmp = defaultdict(dict)
-for i,dim in product(range(10),dims):
+for i, dim in product(range(10), dims):
     rp = SparseRandomProjection(random_state=i, n_components=dim)
-    tmp[dim][i] = pairwiseDistCorr(rp.fit_transform(digitsX), digitsX)
+    tmp[dim][i] = pairwiseDistCorr(rp.fit_transform(c_X), c_X)
 tmp =pd.DataFrame(tmp).T
-tmp.to_csv(out+'digits scree1.csv')
+tmp.to_csv('{}/cancer scree1.csv'.format(OUT))
 
 
 tmp = defaultdict(dict)
-for i,dim in product(range(10),dims):
+for i, dim in product(range(10), dims):
     rp = SparseRandomProjection(random_state=i, n_components=dim)
-    rp.fit(madelonX)
-    tmp[dim][i] = reconstructionError(rp, madelonX)
+    rp.fit(r_X)
+    tmp[dim][i] = reconstructionError(rp, r_X)
 tmp =pd.DataFrame(tmp).T
-tmp.to_csv(out+'madelon scree2.csv')
+tmp.to_csv('{}/review scree2.csv'.format(OUT))
 
 
 tmp = defaultdict(dict)
-for i,dim in product(range(10),dims):
+for i, dim in product(range(10), dims):
     rp = SparseRandomProjection(random_state=i, n_components=dim)
-    rp.fit(digitsX)
-    tmp[dim][i] = reconstructionError(rp, digitsX)
+    rp.fit(c_X)
+    tmp[dim][i] = reconstructionError(rp, c_X)
 tmp =pd.DataFrame(tmp).T
-tmp.to_csv(out+'digits scree2.csv')
+tmp.to_csv('{}/cancer scree2.csv'.format(OUT))
 
-#%% Data for 2
-
-grid ={'rp__n_components':dims,'NN__alpha':nn_reg,'NN__hidden_layer_sizes':nn_arch}
-rp = SparseRandomProjection(random_state=5)
-mlp = MLPClassifier(activation='relu',max_iter=2000,early_stopping=True,random_state=5)
-pipe = Pipeline([('rp',rp),('NN',mlp)])
-gs = GridSearchCV(pipe,grid,verbose=10,cv=5)
-
-gs.fit(madelonX,madelonY)
-tmp = pd.DataFrame(gs.cv_results_)
-tmp.to_csv(out+'Madelon dim red.csv')
-
-
-grid ={'rp__n_components':dims,'NN__alpha':nn_reg,'NN__hidden_layer_sizes':nn_arch}
-rp = SparseRandomProjection(random_state=5)
-mlp = MLPClassifier(activation='relu',max_iter=2000,early_stopping=True,random_state=5)
-pipe = Pipeline([('rp',rp),('NN',mlp)])
-gs = GridSearchCV(pipe,grid,verbose=10,cv=5)
-
-gs.fit(digitsX,digitsY)
-tmp = pd.DataFrame(gs.cv_results_)
-tmp.to_csv(out+'digits dim red.csv')
-raise
-#%% data for 3
-# Set this from chart 2 and dump, use clustering script to finish up
-dim = 10
-rp = SparseRandomProjection(n_components=dim,random_state=5)
-
-madelonX2 = rp.fit_transform(madelonX)
-madelon2 = pd.DataFrame(np.hstack((madelonX2,np.atleast_2d(madelonY).T)))
-cols = list(range(madelon2.shape[1]))
-cols[-1] = 'Class'
-madelon2.columns = cols
-madelon2.to_hdf(out+'datasets.hdf','madelon',complib='blosc',complevel=9)
-
-dim = 60
-rp = SparseRandomProjection(n_components=dim,random_state=5)
-digitsX2 = rp.fit_transform(digitsX)
-digits2 = pd.DataFrame(np.hstack((digitsX2,np.atleast_2d(digitsY).T)))
-cols = list(range(digits2.shape[1]))
-cols[-1] = 'Class'
-digits2.columns = cols
-digits2.to_hdf(out+'datasets.hdf','digits',complib='blosc',complevel=9)
+init_decomp = partial(SparseRandomProjection, random_state=5)
+decomp1 = partial(SparseRandomProjection, n_components=5, random_state=5)
+decomp2 = partial(SparseRandomProjection, n_components=30, random_state=5)
+run_dim_alg(r_X, r_y, 'rp', dims, (init_decomp, decomp1), OUT)
+run_dim_alg(c_X, c_y, 'rp', dims, (init_decomp, decomp2), OUT)
