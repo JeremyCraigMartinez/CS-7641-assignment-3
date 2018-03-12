@@ -1,18 +1,17 @@
 from os.path import dirname, realpath
 import re
 
-from sklearn.feature_extraction.text import CountVectorizer
-import sklearn.model_selection as ms
 import pandas as pd
+from sklearn.model_selection import train_test_split
+from sklearn.feature_extraction.text import CountVectorizer
 
-# uncomment to download stopwords
+dir_path = dirname(realpath(__file__))
+
+# uncomment if you do not have stopwords downloaded
 #import nltk
 #nltk.download('stopwords')
 from nltk.corpus import stopwords
 from nltk.stem.porter import PorterStemmer
-
-dir_path = dirname(realpath(__file__))
-
 def get_corpus(dataset):
     corpus = []
     for i in range(0, 1000):
@@ -27,7 +26,7 @@ def get_corpus(dataset):
 
 # Creating the Bag of Words model
 def get_X_Y(corpus, dataset):
-    cv = CountVectorizer(max_features=1500)
+    cv = CountVectorizer(max_features=100)
     X = cv.fit_transform(corpus).toarray()
     y = dataset.iloc[:, 1].values
 
@@ -36,10 +35,10 @@ def get_X_Y(corpus, dataset):
 # Splitting the dataset into the Training set and Test set
 def get_train_test_set():
     # Importing the dataset
-    dataset = pd.read_csv('{}/../../data/Restaurant_Reviews.tsv'.format(dir_path), delimiter='\t', quoting=3)
+    dataset = pd.read_csv(dir_path + '/../../data/Restaurant_Reviews.tsv', delimiter='\t', quoting=3)
 
     corpus = get_corpus(dataset)
     X, y = get_X_Y(corpus, dataset)
 
     # X_train, X_test, y_train, y_test
-    return ms.train_test_split(X, y, test_size=0.2, random_state=0, stratify=y)
+    return train_test_split(X, y, test_size=0.2)
