@@ -8,7 +8,8 @@ from sklearn.base import TransformerMixin, BaseEstimator
 import scipy.sparse as sps
 from scipy.linalg import pinv
 
-nn_arch = [(50, 50), (50, ), (25, ), (25, 25), (100, 25, 100)]
+#nn_arch = [(50, 50), (50, ), (25, ), (25, 25), (100, 25, 100)]
+nn_arch = [(50, 50),]
 nn_reg = [10**-x for x in range(1, 5)]
 
 def cluster_acc(Y, clusterLabels):
@@ -19,8 +20,6 @@ def cluster_acc(Y, clusterLabels):
         sub = Y[mask]
         target = Counter(sub).most_common(1)[0][0]
         pred[mask] = target
-#    assert max(pred) == max(Y)
-#    assert min(pred) == min(Y)
     return acc(Y, pred)
 
 class myGMM(GMM):
