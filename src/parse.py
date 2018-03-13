@@ -18,7 +18,7 @@ def build_hdf(_X, _y, name):
 
     data = pd.concat([X, y], 1)
     data = data.dropna(axis=1, how='all')
-    data.to_hdf('{}/{}_datasets.hdf'.format(OUT, name), name, complib='blosc', complevel=9)
+    data.to_hdf('{}/datasets.hdf'.format(OUT), name, complib='blosc', complevel=9)
 
 if __name__ == '__main__':
     build_hdf(h_train_X, h_train_y, 'cancer')

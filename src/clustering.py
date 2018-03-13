@@ -1,3 +1,4 @@
+import sys
 from os.path import dirname, realpath
 from time import clock
 from collections import defaultdict
@@ -14,24 +15,23 @@ from sklearn.metrics import adjusted_mutual_info_score as ami
 from sklearn.neural_network import MLPClassifier
 from sklearn.model_selection import GridSearchCV
 
-from helpers.clustering import cluster_acc, myGMM, nn_arch, nn_reg
+from helpers.clustering import cluster_acc, myGMM, nn_arch, nn_reg, r_clusters, c_clusters
 
 dir_path = dirname(realpath(__file__))
-OUT = '{}/../OUTPUT/BASE'.format(dir_path)
+output_dir = sys.argv[1] if len(sys.argv) >= 2 else 'BASE'
+OUT = '{}/../OUTPUT/{}'.format(dir_path, output_dir)
 
 np.random.seed(0)
-cancer_data = pd.read_hdf('{}/cancer_datasets.hdf'.format(OUT), 'cancer')
+cancer_data = pd.read_hdf('{}/datasets.hdf'.format(OUT), 'cancer')
 c_X = cancer_data.drop('Class', 1).copy().values
 c_y = cancer_data['Class'].copy().values
 
-reviews_data = pd.read_hdf('{}/reviews_datasets.hdf'.format(OUT), 'reviews')
+reviews_data = pd.read_hdf('{}/datasets.hdf'.format(OUT), 'reviews')
 r_X = reviews_data.drop('Class', 1).copy().values
 r_y = reviews_data['Class'].copy().values
 
 r_X = StandardScaler().fit_transform(r_X)
 c_X = StandardScaler().fit_transform(c_X)
-
-clusters = [2, 5, 10, 15, 20, 25, 30, 35, 40]
 
 def fit():
     st = clock()
@@ -56,8 +56,9 @@ def fit():
         adjMI[it][name]['GMM'] = ami(y, gmm.predict(X))
         print(it, clock()-st)
 
-    for k in clusters:
+    for k in r_clusters:
         func(r_X, r_y, 'reviews', k)
+    for k in c_clusters:
         func(c_X, c_y, 'cancer', k)
 
     SSE = (-pd.DataFrame(SSE)).T
@@ -74,7 +75,7 @@ def fit():
     acc.ix[:, :, 'cancer'].to_csv('{}/{}_acc.csv'.format(OUT, 'cancer'))
     adjMI.ix[:, :, 'cancer'].to_csv('{}/{}_adjMI.csv'.format(OUT, 'cancer'))
 
-def other(c_alg, X, y, name):
+def other(c_alg, X, y, name, clusters):
     grid = None
     if name == 'km':
         grid = {'km__n_clusters':clusters, 'NN__alpha':nn_reg, 'NN__hidden_layer_sizes':nn_arch}
@@ -93,11 +94,11 @@ def other(c_alg, X, y, name):
     csv.to_csv('{}/{}.csv'.format(OUT, name))
 
 if __name__ == '__main__':
-    f = Process(target=fit, args=(,))
-    r_km = Process(target=other, args=('km', r_X, r_y, 'reviews',))
-    r_gmm = Process(target=other, args=('gmm', r_X, r_y, 'reviews',))
-    c_km = Process(target=other, args=('km', c_X, c_y, 'cancer',))
-    c_gmm = Process(target=other, args=('gmm', c_X, c_y, 'cancer',))
+    f = Process(target=fit, args=())
+    r_km = Process(target=other, args=('km', r_X, r_y, 'reviews', r_clusters,))
+    r_gmm = Process(target=other, args=('gmm', r_X, r_y, 'reviews', r_clusters,))
+    c_km = Process(target=other, args=('km', c_X, c_y, 'cancer', c_clusters,))
+    c_gmm = Process(target=other, args=('gmm', c_X, c_y, 'cancer', c_clusters,))
 
     f.start()
     r_km.start()

@@ -111,3 +111,7 @@ ENV/
 OUTPUT
 madelon_*
 BASE
+plots
+
+# temporarily why I write the analysis
+jmartinez91-analysis*
