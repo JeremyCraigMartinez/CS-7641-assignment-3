@@ -3,6 +3,7 @@ from os.path import dirname, realpath
 from time import clock
 from collections import defaultdict
 from multiprocessing import Process
+from threading import Thread
 
 import pandas as pd
 import numpy as np
@@ -56,10 +57,18 @@ def fit():
         adjMI[it][name]['GMM'] = ami(y, gmm.predict(X))
         print(it, clock()-st)
 
+    threads = []
     for k in r_clusters:
-        func(r_X, r_y, 'reviews', k)
+        t = Thread(target=func, args=(r_X, r_y, 'reviews', k))
+        t.start()
+        threads.append(t)
     for k in c_clusters:
-        func(c_X, c_y, 'cancer', k)
+        t = Thread(target=func, args=(c_X, c_y, 'cancer', k))
+        t.start()
+        threads.append(t)
+
+    for ts in threads:
+        ts.join()
 
     SSE = (-pd.DataFrame(SSE)).T
     SSE.rename(columns=lambda x: x+' SSE (left)', inplace=True)
@@ -77,7 +86,7 @@ def fit():
 
 def other(c_alg, X, y, name, clusters):
     grid = None
-    if name == 'km':
+    if c_alg == 'km':
         grid = {'km__n_clusters':clusters, 'NN__alpha':nn_reg, 'NN__hidden_layer_sizes':nn_arch}
     else:
         grid = {'gmm__n_components':clusters, 'NN__alpha':nn_reg, 'NN__hidden_layer_sizes':nn_arch}
@@ -94,6 +103,7 @@ def other(c_alg, X, y, name, clusters):
     csv.to_csv('{}/{}.csv'.format(OUT, name))
 
 if __name__ == '__main__':
+    print(r_clusters, c_clusters)
     f = Process(target=fit, args=())
     r_km = Process(target=other, args=('km', r_X, r_y, 'reviews', r_clusters,))
     r_gmm = Process(target=other, args=('gmm', r_X, r_y, 'reviews', r_clusters,))
