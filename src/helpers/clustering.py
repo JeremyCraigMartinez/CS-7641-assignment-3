@@ -25,7 +25,6 @@ def cluster_acc(Y, clusterLabels):
         sub = Y[mask]
         target = Counter(sub).most_common(1)[0][0]
         pred[mask] = target
-    print(pred)
     return acc(Y, pred)
 
 class myGMM(GMM):

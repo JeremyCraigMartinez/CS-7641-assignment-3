@@ -18,11 +18,11 @@ from helpers.clustering import nn_arch, nn_reg
 
 def get_data(BASE):
     np.random.seed(0)
-    cancer_data = pd.read_hdf('{}/cancer_datasets.hdf'.format(BASE), 'cancer')
+    cancer_data = pd.read_hdf('{}/datasets.hdf'.format(BASE), 'cancer')
     c_X = cancer_data.drop('Class', 1).copy().values
     c_y = cancer_data['Class'].copy().values
 
-    reviews_data = pd.read_hdf('{}/reviews_datasets.hdf'.format(BASE), 'reviews')
+    reviews_data = pd.read_hdf('{}/datasets.hdf'.format(BASE), 'reviews')
     r_X = reviews_data.drop('Class', 1).copy().values
     r_y = reviews_data['Class'].copy().values
 
