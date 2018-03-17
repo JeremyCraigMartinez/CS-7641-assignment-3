@@ -61,4 +61,3 @@ def run_nn_with_eigen_weight_vector(X, y, name, dname, dims, decomposition, OUT,
     gs.fit(X, y)
     tmp = pd.DataFrame(gs.cv_results_)
     tmp.to_csv('{}/{}_{}_dim_red.csv'.format(OUT, dname, name))
-

@@ -1,10 +1,10 @@
 # code found at http://scikit-learn.org/stable/auto_examples/mixture/plot_gmm_selection.html
 
-import numpy as np
 import itertools
 from os.path import dirname, realpath
 import sys
 
+import numpy as np
 from scipy import linalg
 import matplotlib.pyplot as plt
 import matplotlib as mpl
@@ -50,7 +50,6 @@ def main(X, _):
     color_iter = itertools.cycle(['navy', 'turquoise', 'cornflowerblue',
                                   'darkorange'])
     clf = best_gmm
-    print(clf)
     bars = []
 
     # Plot the BIC scores
@@ -70,7 +69,7 @@ def main(X, _):
     spl.legend([b[0] for b in bars], cv_types)
 
     # Plot the winner
-    splot = plt.subplot(2, 1, 2)
+    splot = plt.subplot(2, 1, 2) # pylint: disable=W0612
     #Y_ = clf.predict(X)
     #for i, (mean, cov, color) in enumerate(zip(clf.means_, clf.covariances_,
     #                                           color_iter)):
@@ -94,10 +93,9 @@ def main(X, _):
     plt.subplots_adjust(hspace=.35, bottom=.02)
     plt.show()
 
-color_iter = itertools.cycle(['navy', 'c', 'cornflowerblue', 'gold',
-                              'darkorange'])
-
 def plot_results(X, Y_, means, covariances, index, title):
+    color_iter = itertools.cycle(['navy', 'c', 'cornflowerblue', 'gold', 'darkorange'])
+
     splot = plt.subplot(2, 1, 1 + index)
     for i, (mean, covar, color) in enumerate(zip(
             means, covariances, color_iter)):

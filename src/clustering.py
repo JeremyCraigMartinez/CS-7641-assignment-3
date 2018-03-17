@@ -21,12 +21,18 @@ from sklearn.externals.joblib import Memory
 from helpers.clustering import cluster_acc, myGMM, nn_arch, nn_reg, r_clusters, c_clusters
 from helpers.dim_reduction import get_data
 
+args = sys.argv[2:]
+if len(args) >= 3:
+    args = args if args[1] != '--delim' else args[2].split(',')
+print(args)
 dir_path = dirname(realpath(__file__))
-output_dir = sys.argv[1] if len(sys.argv) >= 2 else 'BASE'
+input_dir = args[0] if len(args) >= 1 else 'BASE'
+output_dir = '{}/{}'.format(input_dir, args[1][:-1]) if len(args) >= 2 else input_dir
+print(input_dir, output_dir)
 OUT = '{}/../OUTPUT/{}'.format(dir_path, output_dir)
-BASE = '{}/../OUTPUT/{}'.format(dir_path, output_dir)
+BASE = '{}/../OUTPUT/{}'.format(dir_path, input_dir)
 
-r, c = get_data(BASE, "" if len(sys.argv) < 3 else sys.argv[2])
+r, c = get_data(BASE, "" if len(args) < 2 else args[1])
 r_X, r_y = r
 c_X, c_y = c
 
