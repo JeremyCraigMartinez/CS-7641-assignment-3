@@ -4,7 +4,7 @@
 import matplotlib.pyplot as plt
 import numpy as np
 
-plot_colors = ('ro', 'go', 'bo', 'co', 'darkorange', 'black')
+_plot_colors = ('ro', 'go', 'bo', 'co', 'darkorange', 'black')
 
 def get_compare_figure(title, label, accuracy, times):
 
@@ -103,7 +103,7 @@ class Figures:
         plt.savefig("plots/" + self.title + ".png")
         return plt
 
-    def plot_curve(self, label, param_range, values, plot=True):
+    def plot_curve(self, label, param_range, values, plot=True, plot_colors=_plot_colors):
         if (plot):
             plt.plot(param_range, values, plot_colors[self.num], label=label)
         else:

@@ -24,9 +24,9 @@ from helpers.dim_reduction import get_data
 dir_path = dirname(realpath(__file__))
 output_dir = sys.argv[1] if len(sys.argv) >= 2 else 'BASE'
 OUT = '{}/../OUTPUT/{}'.format(dir_path, output_dir)
-BASE = '{}/../../OUTPUT/BASE'.format(dir_path)
+BASE = '{}/../OUTPUT/{}'.format(dir_path, output_dir)
 
-r, c = get_data(BASE)
+r, c = get_data(BASE, "" if len(sys.argv) < 3 else sys.argv[2])
 r_X, r_y = r
 c_X, c_y = c
 
