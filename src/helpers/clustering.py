@@ -12,8 +12,8 @@ from scipy.linalg import pinv
 nn_arch = [(50, 50),]
 nn_reg = [10**-x for x in range(1, 5)]
 
-r_clusters = [2, 3, 5, 8, 13, 21, 34, 55, 89, ]
-c_clusters = [2, 4, 6, 8, 10, 14, 18, 25, 35, ]
+r_clusters = [8, 13, 21, 34, 55, 89, 104, 119, 134, 159]
+c_clusters = [8, 10, 14, 18, 25, 35, 45, 55, 65, 75]
 
 dims = [2, 5, 10, 15, 20, 25, 30, 35, 40]
 

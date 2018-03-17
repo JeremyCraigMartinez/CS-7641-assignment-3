@@ -1,3 +1,5 @@
+# code found at http://scikit-learn.org/stable/auto_examples/cluster/plot_kmeans_silhouette_analysis.html
+
 from __future__ import print_function
 from os.path import dirname, realpath
 import sys
@@ -25,9 +27,9 @@ _r, _c = get_data(BASE)
 r_X, r_y = _r
 c_X, c_y = _c
 
-r_clusters = [2, 3, 5, 8, 13, 21, 34, 55, 89, ]
-c_clusters = [2, 4, 6, 8, 10, 14, 18, 25, 35, ]
-range_n_clusters = r_clusters
+r_clusters = [8, 159] #[2, 3, 5, 8, 13, 21, 34, 55, 89, ]
+c_clusters = [10, 55] #[8, 10, 14, 18, 25, 35, 45, 55, 65, 75]
+range_n_clusters = c_clusters
 
 def main(X, _):
     for n_clusters in range_n_clusters:
@@ -117,5 +119,5 @@ def main(X, _):
         plt.show()
 
 if __name__ == '__main__':
-    main(r_X, r_y)
-    #main(c_X, c_y)
+    #main(r_X, r_y)
+    main(c_X, c_y)
