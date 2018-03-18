@@ -17,21 +17,16 @@ print(__doc__)
 
 dir_path = dirname(realpath(__file__))
 output_dir = sys.argv[1] if len(sys.argv) >= 2 else 'BASE'
-OUT = '{}/../OUTPUT/{}'.format(dir_path, output_dir)
-BASE = '{}/../OUTPUT/BASE'.format(dir_path)
+OUTPUT = '{}/../OUTPUT'.format(dir_path)
+OUT = '{}/{}'.format(OUTPUT, output_dir)
+#BASE = '{}/../OUTPUT/BASE'.format(dir_path)
+BASE = OUT
 
-# Generating the sample data from make_blobs
-# This particular setting has one distinct cluster and 3 clusters placed close
-# together.
-_r, _c = get_data(BASE)
-r_X, r_y = _r
-c_X, c_y = _c
+r_components = [8, 13, 21, 34, 55, 89, 104, 119, 134, 159]
+c_components = [8, 10, 14, 18, 25, 35, 45, 55, 65, 75]
+range_n_clusters = c_components
 
-r_clusters = [8, 159] #[2, 3, 5, 8, 13, 21, 34, 55, 89, ]
-c_clusters = [10, 55] #[8, 10, 14, 18, 25, 35, 45, 55, 65, 75]
-range_n_clusters = c_clusters
-
-def main(X, _):
+def main(X):
     for n_clusters in range_n_clusters:
         # Create a subplot with 1 row and 2 columns
         fig, (ax1, ax2) = plt.subplots(1, 2)
@@ -118,6 +113,26 @@ def main(X, _):
 
         plt.show()
 
+def ICA():
+    global range_n_clusters
+    range_n_clusters = [i for i in range(5, 62, 8)]
+    _r, _c = get_data('{}/ICA'.format(OUTPUT), '37-')
+    c_X, c_y = _c
+    main(c_X)
+    _r, _c = get_data('{}/ICA'.format(OUTPUT), '45-')
+    r_X, r_y = _r
+    main(r_X)
+
+def PCA():
+    _r, _c = get_data('{}/PCA'.format(OUTPUT), '0.6-')
+    r_X, r_y = _r
+    c_X, c_y = _c
+
+    #main(r_X)
+    main(c_X)
+
 if __name__ == '__main__':
-    #main(r_X, r_y)
-    main(c_X, c_y)
+    if sys.argv[1] == 'ICA':
+        ICA()
+    elif sys.argv[1] == 'PCA':
+        PCA()

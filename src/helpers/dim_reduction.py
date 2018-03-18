@@ -32,9 +32,8 @@ def get_data(BASE, prefix=""):
 
     return ((r_X, r_y), (c_X, c_y),)
 
-def run_dim_alg(X, y, name, dname, decomposition, p, OUT):
-    decomp = decomposition()
-    X2 = decomp.fit_transform(X, y)
+def run_dim_alg(X, y, name, dname, decomp, p, OUT):
+    X2 = decomp.fit_transform(X)
     data2 = pd.DataFrame(np.hstack((X2, np.atleast_2d(y).T)))
     cols = list(range(data2.shape[1]))
     cols[-1] = 'Class'

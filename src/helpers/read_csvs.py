@@ -17,5 +17,13 @@ def read_csv_sideways(path_name):
     return (
         np.array(data.columns[1:]).astype(np.double),
         (data.values[0][0], np.array(data.values[0][1:]).astype(np.double)),
-        (data.values[1][0], np.array(data.values[1][1:]).astype(np.double))
+        (data.values[1][0], np.array(data.values[1][1:]).astype(np.double)),
     )
+
+import math
+def interpolate_gaps(data):
+    new_data = []
+    for i in range(0,len(data)):
+        if not math.isnan(data[i]):
+            new_data.append(data[i])
+    return new_data
