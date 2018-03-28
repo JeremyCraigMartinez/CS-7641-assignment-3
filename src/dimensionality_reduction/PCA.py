@@ -27,8 +27,8 @@ def main():
     for i in [0.6, 0.7, 0.8, 0.9]:
         decomp1 = PCA(n_components=i, random_state=10)
         decomp2 = PCA(n_components=i, random_state=10)
-        run_dim_alg(r_X, r_y, 'pca', 'reviews', decomp1, i, OUT)
-        run_dim_alg(c_X, c_y, 'pca', 'cancer', decomp2, i, OUT)
+        run_dim_alg(r_X, r_y, 'reviews', decomp1, i, OUT)
+        run_dim_alg(c_X, c_y, 'cancer', decomp2, i, OUT)
 
 if __name__ == '__main__':
     main()

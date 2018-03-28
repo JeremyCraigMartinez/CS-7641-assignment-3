@@ -16,29 +16,37 @@ sys.path.insert(0, '{}/..'.format(dir_path))
 
 from helpers.clustering import nn_arch, nn_reg
 
-def get_data(BASE, prefix=""):
+def get_data(BASE, prefix="", ds=None):
     np.random.seed(0)
     print('{}/{}datasets.hdf'.format(BASE, prefix))
-    cancer_data = pd.read_hdf('{}/{}datasets.hdf'.format(BASE, prefix), 'cancer')
-    c_X = cancer_data.drop('Class', 1).copy().values
-    c_y = cancer_data['Class'].copy().values
+    def cancer():
+        cancer_data = pd.read_hdf('{}/{}datasets.hdf'.format(BASE, prefix), 'cancer')
+        c_X = cancer_data.drop('Class', 1).copy().values
+        c_y = cancer_data['Class'].copy().values
+        c_X = StandardScaler().fit_transform(c_X)
+        return (c_X, c_y)
 
-    reviews_data = pd.read_hdf('{}/{}datasets.hdf'.format(BASE, prefix), 'reviews')
-    r_X = reviews_data.drop('Class', 1).copy().values
-    r_y = reviews_data['Class'].copy().values
+    def reviews():
+        reviews_data = pd.read_hdf('{}/{}datasets.hdf'.format(BASE, prefix), 'reviews')
+        r_X = reviews_data.drop('Class', 1).copy().values
+        r_y = reviews_data['Class'].copy().values
+        r_X = StandardScaler().fit_transform(r_X)
+        return (r_X, r_y)
 
-    r_X = StandardScaler().fit_transform(r_X)
-    c_X = StandardScaler().fit_transform(c_X)
+    if ds == 'c':
+        return cancer()
+    if ds == 'r':
+        return reviews()
 
-    return ((r_X, r_y), (c_X, c_y),)
+    return (reviews(), cancer(),)
 
-def run_dim_alg(X, y, name, dname, decomp, p, OUT):
+def run_dim_alg(X, y, dname, decomp, p, OUT):
     X2 = decomp.fit_transform(X)
     data2 = pd.DataFrame(np.hstack((X2, np.atleast_2d(y).T)))
     cols = list(range(data2.shape[1]))
     cols[-1] = 'Class'
     data2.columns = cols
-    data2.to_hdf('{}/{}-datasets.hdf'.format(OUT, p, name), dname, complib='blosc', complevel=9)
+    data2.to_hdf('{}/{}-datasets.hdf'.format(OUT, p), dname, complib='blosc', complevel=9)
 
 def run_nn_with_eigen_weight_vector(X, y, name, dname, dims, decomposition, OUT, filt=False):
     grid = None

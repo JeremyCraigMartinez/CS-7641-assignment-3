@@ -32,14 +32,21 @@ print(input_dir, output_dir)
 OUT = '{}/../OUTPUT/{}'.format(dir_path, output_dir)
 BASE = '{}/../OUTPUT/{}'.format(dir_path, input_dir)
 
-r, c = get_data(BASE, "" if len(args) < 2 else args[1])
-r_X, r_y = r
-c_X, c_y = c
+if '-r' in sys.argv:
+    r = get_data(BASE, "" if len(args) < 2 else args[1], 'r')
+    r_X, r_y = r
+elif '-c' in sys.argv:
+    c = get_data(BASE, "" if len(args) < 2 else args[1], 'c')
+    c_X, c_y = c
+else:
+    r, c = get_data(BASE, "" if len(args) < 2 else args[1])
+    r_X, r_y = r
+    c_X, c_y = c
 
 cachedir = mkdtemp()
 memory = Memory(cachedir=cachedir, verbose=10)
 
-def fit():
+def fit(ignore=None):
     st = clock()
     SSE = defaultdict(dict)
     ll = defaultdict(dict)
@@ -63,14 +70,16 @@ def fit():
         print(it, clock()-st)
 
     threads = []
-    for k in r_clusters:
-        t = Thread(target=func, args=(r_X, r_y, 'reviews', k))
-        t.start()
-        threads.append(t)
-    for k in c_clusters:
-        t = Thread(target=func, args=(c_X, c_y, 'cancer', k))
-        t.start()
-        threads.append(t)
+    if ignore != 'reviews':
+        for k in r_clusters:
+            t = Thread(target=func, args=(r_X, r_y, 'reviews', k))
+            t.start()
+            threads.append(t)
+    if ignore != 'cancer':
+        for k in c_clusters:
+            t = Thread(target=func, args=(c_X, c_y, 'cancer', k))
+            t.start()
+            threads.append(t)
 
     for ts in threads:
         ts.join()
@@ -83,11 +92,13 @@ def fit():
     adjMI = pd.Panel(adjMI)
 
     SSE.to_csv('{}/SSE.csv'.format(OUT))
-    ll.to_csv('{}/logliklihood.csv'.format(OUT))
-    acc.ix[:, :, 'reviews'].to_csv('{}/{}_acc.csv'.format(OUT, 'reviews'))
-    adjMI.ix[:, :, 'reviews'].to_csv('{}/{}_adjMI.csv'.format(OUT, 'reviews'))
-    acc.ix[:, :, 'cancer'].to_csv('{}/{}_acc.csv'.format(OUT, 'cancer'))
-    adjMI.ix[:, :, 'cancer'].to_csv('{}/{}_adjMI.csv'.format(OUT, 'cancer'))
+    ll.to_csv('{}/loglitklihood.csv'.format(OUT))
+    if ignore != 'reviews':
+        acc.ix[:, :, 'reviews'].to_csv('{}/{}_acc.csv'.format(OUT, 'reviews'))
+        adjMI.ix[:, :, 'reviews'].to_csv('{}/{}_adjMI.csv'.format(OUT, 'reviews'))
+    if ignore != 'cancer':
+        acc.ix[:, :, 'cancer'].to_csv('{}/{}_acc.csv'.format(OUT, 'cancer'))
+        adjMI.ix[:, :, 'cancer'].to_csv('{}/{}_adjMI.csv'.format(OUT, 'cancer'))
 
 def other(c_alg, X, y, name, clusters):
     grid = None
@@ -109,20 +120,25 @@ def other(c_alg, X, y, name, clusters):
     csv.to_csv('{}/{}.csv'.format(OUT, name))
 
 if __name__ == '__main__':
-    f = Process(target=fit, args=())
-    r_km = Process(target=other, args=('km', r_X, r_y, 'reviews', r_clusters,))
-    r_gmm = Process(target=other, args=('gmm', r_X, r_y, 'reviews', r_clusters,))
-    c_km = Process(target=other, args=('km', c_X, c_y, 'cancer', c_clusters,))
-    c_gmm = Process(target=other, args=('gmm', c_X, c_y, 'cancer', c_clusters,))
+    _ignore = None
+    if '-r' in sys.argv:
+        _ignore = 'cancer'
+    elif '-c' in sys.argv:
+        _ignore = 'reviews'
+    else:
+        print('run "-r" or "-c" to isolate reivew or cancer data')
 
-    f.start()
-    r_km.start()
-    r_gmm.start()
-    c_km.start()
-    c_gmm.start()
+    processes = []
+    processes.append(Process(target=fit, args=(_ignore,)))
+    if _ignore != 'reviews':
+        processes.append(Process(target=other, args=('km', r_X, r_y, 'reviews', r_clusters,)))
+        processes.append(Process(target=other, args=('gmm', r_X, r_y, 'reviews', r_clusters,)))
+    if _ignore != 'cancer':
+        processes.append(Process(target=other, args=('km', c_X, c_y, 'cancer', c_clusters,)))
+        processes.append(Process(target=other, args=('gmm', c_X, c_y, 'cancer', c_clusters,)))
 
-    f.join()
-    r_km.join()
-    r_gmm.join()
-    c_km.join()
-    c_gmm.join()
+    for p in processes:
+        p.start()
+
+    for p in processes:
+        p.join()

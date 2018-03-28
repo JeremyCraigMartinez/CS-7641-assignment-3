@@ -51,10 +51,10 @@ tmp.to_csv('{}/cancer scree2.csv'.format(OUT))
 def main():
     for i, val in enumerate(r_dims): # [0.6, 0.7, 0.8, 0.9]:
         decomp1 = SparseRandomProjection(n_components=val)
-        run_dim_alg(r_X, r_y, 'rp', 'reviews', decomp1, val, OUT)
+        run_dim_alg(r_X, r_y, 'reviews', decomp1, val, OUT)
     for i, val in enumerate(c_dims): # [0.6, 0.7, 0.8, 0.9]:
         decomp2 = SparseRandomProjection(n_components=val)
-        run_dim_alg(c_X, c_y, 'rp', 'cancer', decomp2, val, OUT)
+        run_dim_alg(c_X, c_y, 'cancer', decomp2, val, OUT)
 
 if __name__ == '__main__':
     if 'fluc' in sys.argv:

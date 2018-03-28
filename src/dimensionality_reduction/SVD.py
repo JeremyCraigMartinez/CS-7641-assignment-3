@@ -23,14 +23,13 @@ c_X, c_y = c
 r_dims = [44, 51, 58, 65, 72, 79]
 c_dims = [8, 16, 23, 30, 37, 44]
 
-print(r_dims)
 def main():
     for i, val in enumerate(r_dims): # [0.6, 0.7, 0.8, 0.9]:
         decomp1 = TruncatedSVD(n_components=val)
-        run_dim_alg(r_X, r_y, 'rp', 'reviews', decomp1, val, OUT)
+        run_dim_alg(r_X, r_y, 'reviews', decomp1, val, OUT)
     for i, val in enumerate(c_dims): # [0.6, 0.7, 0.8, 0.9]:
         decomp2 = TruncatedSVD(n_components=val)
-        run_dim_alg(c_X, c_y, 'rp', 'cancer', decomp2, val, OUT)
+        run_dim_alg(c_X, c_y, 'cancer', decomp2, val, OUT)
 
 if __name__ == '__main__':
     main()

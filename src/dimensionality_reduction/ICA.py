@@ -51,8 +51,8 @@ def main():
     for i, val in enumerate(r_dims): # [0.6, 0.7, 0.8, 0.9]:
         decomp1.set_params(n_components=r_dims[i])
         decomp2.set_params(n_components=c_dims[i])
-        run_dim_alg(r_X, r_y, 'ica', 'reviews', decomp1, r_dims[i], OUT)
-        run_dim_alg(c_X, c_y, 'ica', 'cancer', decomp2, c_dims[i], OUT)
+        run_dim_alg(r_X, r_y, 'reviews', decomp1, r_dims[i], OUT)
+        run_dim_alg(c_X, c_y, 'cancer', decomp2, c_dims[i], OUT)
 
 if __name__ == '__main__':
     #main()
