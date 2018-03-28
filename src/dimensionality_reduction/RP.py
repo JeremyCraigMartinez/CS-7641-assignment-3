@@ -20,23 +20,17 @@ r, c = get_data(BASE)
 r_X, r_y = r
 c_X, c_y = c
 
-dims = r_dims = c_dims = [i for i in range(5, 62, 8)]
+r_dims = c_dims = [i for i in range(16, 80, 7)] # final has 46 dims, no reduction just transformation. Interesting base case
 
-tmp = defaultdict(dict)
-for i, dim in product(range(10), dims):
-    rp = SparseRandomProjection(random_state=i, n_components=dim)
-    tmp[dim][i] = pairwiseDistCorr(rp.fit_transform(r_X), r_X)
-tmp = pd.DataFrame(tmp).T
-tmp.to_csv('{}/review scree1.csv'.format(OUT))
+def rpFluctuation(dims, ds):
+    tmp = defaultdict(dict)
+    for i, dim in product(range(10), dims):
+        rp = SparseRandomProjection(random_state=i, n_components=dim)
+        tmp[dim][i] = pairwiseDistCorr(rp.fit_transform(r_X), r_X)
+    tmp = pd.DataFrame(tmp).T
+    tmp.to_csv('{}/{}_comparison.csv'.format(OUT, ds))
 
-tmp = defaultdict(dict)
-for i, dim in product(range(10), dims):
-    rp = SparseRandomProjection(random_state=i, n_components=dim)
-    tmp[dim][i] = pairwiseDistCorr(rp.fit_transform(c_X), c_X)
-tmp = pd.DataFrame(tmp).T
-tmp.to_csv('{}/cancer scree1.csv'.format(OUT))
-
-
+'''
 tmp = defaultdict(dict)
 for i, dim in product(range(10), dims):
     rp = SparseRandomProjection(random_state=i, n_components=dim)
@@ -53,13 +47,18 @@ for i, dim in product(range(10), dims):
     tmp[dim][i] = reconstructionError(rp, c_X)
 tmp = pd.DataFrame(tmp).T
 tmp.to_csv('{}/cancer scree2.csv'.format(OUT))
-
+'''
 def main():
-    init_decomp = partial(SparseRandomProjection, random_state=5)
-    decomp1 = partial(SparseRandomProjection, n_components=5, random_state=5)
-    decomp2 = partial(SparseRandomProjection, n_components=30, random_state=5)
-    run_dim_alg(r_X, r_y, 'rp', dims, (init_decomp, decomp1), OUT)
-    run_dim_alg(c_X, c_y, 'rp', dims, (init_decomp, decomp2), OUT)
+    for i, val in enumerate(r_dims): # [0.6, 0.7, 0.8, 0.9]:
+        decomp1 = SparseRandomProjection(n_components=val)
+        run_dim_alg(r_X, r_y, 'rp', 'reviews', decomp1, val, OUT)
+    for i, val in enumerate(c_dims): # [0.6, 0.7, 0.8, 0.9]:
+        decomp2 = SparseRandomProjection(n_components=val)
+        run_dim_alg(c_X, c_y, 'rp', 'cancer', decomp2, val, OUT)
 
 if __name__ == '__main__':
-    #main()
+    if 'fluc' in sys.argv:
+        rpFluctuation(r_dims, 'reviews')
+        rpFluctuation(c_dims, 'cancer')
+    else:
+        main()

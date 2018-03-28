@@ -30,12 +30,10 @@ c_X, c_y = _c
 
 r_components = [8, 13, 21, 34, 55, 89, 104, 119, 134, 159]
 c_components = [8, 10, 14, 18, 25, 35, 45, 55, 65, 75]
-n_components_range = c_components
-n_components_range = [i for i in range(5, 62, 8)]
+n_components_range = None
 def find_best(X, bic): #pylint: disable
     cv_types = ['spherical', 'tied', 'diag', 'full']
     lowest_bic = np.infty
-    best = None
     for cv_type in cv_types:
         for n_components in n_components_range:
             # Fit a Gaussian mixture with EM
@@ -51,53 +49,35 @@ def find_best(X, bic): #pylint: disable
 
 def main(X, _):
     bic = []
-    best = find_best(X, bic)
-    print(best)
-
     bic = np.array(bic)
-    print(bic)
     plot_gmms(bic)
 
-def comparePCA(dim_red_alg):
+def comparePCA(p, ds):
     global BASE
-    r_bests = []
-    c_bests = []
-    params = ['0.6-']#, '0.7-', '0.8-', '0.9-', '0.95-']
-    BASE = '{}/PCA'.format(OUTPUT)
-    for param in params:
-        _r, _c = get_data(BASE, param)
-        c, _ = _c
-        find_best(c, c_bests)
-
-    params = ['0.7-']#, '0.7-', '0.8-', '0.9-', '0.95-']
+    bests = []
+    params = p
     BASE = '{}/PCA'.format(OUTPUT)
     for param in params:
         _r, _c = get_data(BASE, param)
         r, _ = _r
-        find_best(r, r_bests)
+        find_best(r, bests)
 
-    r_bests = np.array(r_bests)
-    c_bests = np.array(c_bests)
-    print(r_bests)
+    bests = np.array(bests)
+    plot_gmms(bests, ds)
 
-    plot_gmms(r_bests)
-    plot_gmms(c_bests)
-
-    plt.show()
-
-def compareICA(dim_red_alg):
+def compare(dim_red_alg, p1, p2):
     global BASE
     r_bests = []
     c_bests = []
-    params = ['37-']#, '0.7-', '0.8-', '0.9-', '0.95-']
-    BASE = '{}/ICA'.format(OUTPUT)
+    params = p1
+    BASE = '{}/{}'.format(OUTPUT, dim_red_alg)
     for param in params:
         _r, _c = get_data(BASE, param)
         c, _ = _c
         find_best(c, c_bests)
 
-    params = ['45-']#, '0.7-', '0.8-', '0.9-', '0.95-']
-    BASE = '{}/ICA'.format(OUTPUT)
+    params = p2
+    BASE = '{}/{}'.format(OUTPUT, dim_red_alg)
     for param in params:
         _r, _c = get_data(BASE, param)
         r, _ = _r
@@ -185,10 +165,27 @@ def epsilloids(X, n, covariance_type='full'):
     plt.show()
 
 if __name__ == '__main__':
-    if '--compare' in sys.argv:
-        compareICA('ICA')
-    elif 'epsilloids' in sys.argv:
+    print('to run: python src/bic.py PCA')
+    if '--epsilloids' in sys.argv:
         epsilloids(r_X, 55)
     else:
-        main(r_X, r_y)
-        main(c_X, c_y)
+        if 'PCA' in sys.argv:
+            r_components = [8, 13, 21, 34, 55, 89, 104, 119, 134, 159]
+            c_components = [8, 10, 14, 18, 25, 35, 45, 55, 65, 75]
+            n_components_range = r_components
+            datasets = ['0.6-', '0.7-', '0.8-', '0.9-']
+            [comparePCA([i], 'Reviews') for i in datasets]
+            n_components_range = c_components
+            [comparePCA([i], 'Cancer') for i in datasets]
+            plt.show()
+        if 'ICA' in sys.argv:
+            n_components_range = [i for i in range(5, 62, 8)]
+            # ['37-']#, '0.7-', '0.8-', '0.9-', '0.95-']
+            # ['45-']#, '0.7-', '0.8-', '0.9-', '0.95-']
+            compare('ICA', ['37-'], ['45-'])
+        if 'RP' in sys.argv:
+            n_components_range = [i for i in range(5, 62, 8)]
+            r_dims = c_dims = ['%s-' % i for i in range(16, 80, 7)]
+            [compare('RP', [i], [i]) for i in r_dims]
+            #compare('RP', [], ['72-'])
+            #compare('RP', [], ['65-'])

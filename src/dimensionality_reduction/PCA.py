@@ -14,8 +14,12 @@ from helpers.dim_reduction import run_dim_alg, get_data
 
 OUT = '{}/../../OUTPUT/PCA'.format(dir_path)
 BASE = '{}/../../OUTPUT/BASE'.format(dir_path)
-
 r, c = get_data(BASE)
+
+# To run on RP data
+#BASE = '{}/../../OUTPUT/RP'.format(dir_path)
+#r, c = get_data(BASE, '72-')
+
 r_X, r_y = r
 c_X, c_y = c
 

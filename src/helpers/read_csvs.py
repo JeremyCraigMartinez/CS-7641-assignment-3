@@ -1,6 +1,7 @@
 #!/usr/bin/env python
 # python-3.6
 
+import math
 import pandas as pd
 import numpy as np
 
@@ -20,10 +21,9 @@ def read_csv_sideways(path_name):
         (data.values[1][0], np.array(data.values[1][1:]).astype(np.double)),
     )
 
-import math
 def interpolate_gaps(data):
     new_data = []
-    for i in range(0,len(data)):
-        if not math.isnan(data[i]):
-            new_data.append(data[i])
+    for _, val in enumerate(data):
+        if not math.isnan(val):
+            new_data.append(val)
     return new_data

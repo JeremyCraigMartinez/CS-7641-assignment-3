@@ -46,11 +46,11 @@ def fit():
     acc = defaultdict(lambda: defaultdict(dict))
     adjMI = defaultdict(lambda: defaultdict(dict))
 
-    def func(X, y, name, it, covariance_type=None):
+    def func(X, y, name, it):
         km = kmeans(random_state=5)
         gmm = GMM(random_state=5)
-        km.set_params(n_clusters=it, covariance_type=covariance_type)
-        gmm.set_params(n_components=it, covariance_type=covariance_type)
+        km.set_params(n_clusters=it)
+        gmm.set_params(n_components=it)
         km.fit(X)
         gmm.fit(X)
 
@@ -64,11 +64,11 @@ def fit():
 
     threads = []
     for k in r_clusters:
-        t = Thread(target=func, args=(r_X, r_y, 'reviews', k, "diag"))
+        t = Thread(target=func, args=(r_X, r_y, 'reviews', k))
         t.start()
         threads.append(t)
     for k in c_clusters:
-        t = Thread(target=func, args=(c_X, c_y, 'cancer', k, "tied"))
+        t = Thread(target=func, args=(c_X, c_y, 'cancer', k))
         t.start()
         threads.append(t)
 

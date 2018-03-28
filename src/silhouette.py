@@ -26,7 +26,7 @@ r_components = [8, 13, 21, 34, 55, 89, 104, 119, 134, 159]
 c_components = [8, 10, 14, 18, 25, 35, 45, 55, 65, 75]
 range_n_clusters = c_components
 
-def main(X):
+def main(X, ds="", xtra_title=""):
     for n_clusters in range_n_clusters:
         # Create a subplot with 1 row and 2 columns
         fig, (ax1, ax2) = plt.subplots(1, 2)
@@ -78,7 +78,7 @@ def main(X):
             # Compute the new y_lower for next plot
             y_lower = y_upper + 10  # 10 for the 0 samples
 
-        ax1.set_title("The silhouette plot for with k clusters = %d" % n_clusters)
+        ax1.set_title("%s Silhouette plot (%d clusters)%s" % (ds, n_clusters, xtra_title))
         ax1.set_xlabel("The silhouette coefficient values")
         ax1.set_ylabel("Cluster label")
 
@@ -117,22 +117,41 @@ def ICA():
     global range_n_clusters
     range_n_clusters = [i for i in range(5, 62, 8)]
     _r, _c = get_data('{}/ICA'.format(OUTPUT), '37-')
-    c_X, c_y = _c
+    c_X, _ = _c
     main(c_X)
     _r, _c = get_data('{}/ICA'.format(OUTPUT), '45-')
-    r_X, r_y = _r
+    r_X, _ = _r
     main(r_X)
 
-def PCA():
-    _r, _c = get_data('{}/PCA'.format(OUTPUT), '0.6-')
-    r_X, r_y = _r
-    c_X, c_y = _c
+def RP():
+    global range_n_clusters
+    range_n_clusters = [16, 30, 45]
+    def runitc(p):
+        _r, _c = get_data('{}/RP'.format(OUTPUT), '%s-' % p)
+        c_X, _ = _c
+        print('Cancer at %s dimensions' % p)
+        main(c_X, 'Cancer', ' (%s dims)' % p)
+    [runitc(i) for i in ['16', '23', '30', '37', '44']]
+    def runitr(p):
+        _r, _c = get_data('{}/RP'.format(OUTPUT), '%s-' % p)
+        r_X, _ = _r
+        print('Reviews at %s dimensions' % p)
+        main(r_X, 'Reviews', ' (%s dims)' % p)
+    [runitr(i) for i in ['44', '51', '65', '72', '79']]
 
-    #main(r_X)
-    main(c_X)
+def PCA():
+    def runit(p):
+        _r, _c = get_data('{}/PCA'.format(OUTPUT), '%s-' % p)
+        r_X, _ = _r
+        c_X, _ = _c
+        #main(r_X)
+        main(c_X)
+    [runit(i) for i in ['0.6']]#, '0.7', '0.8', '0.9']]
 
 if __name__ == '__main__':
     if sys.argv[1] == 'ICA':
         ICA()
+    if sys.argv[1] == 'RP':
+        RP()
     elif sys.argv[1] == 'PCA':
         PCA()
