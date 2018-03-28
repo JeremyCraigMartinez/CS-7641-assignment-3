@@ -21,7 +21,7 @@ def RP_it_comparsion(_file, title, y_axis, x_axis, _OUT=OUT):
         _f.start()
         _x = c_clusters
         _, c, r = read_csv('./OUTPUT/{}/{}'.format(_OUT, _file), 10)
-        _f.plot_curve(str(i), _x, interpolate_gaps(c if d == 'Cancer' else r), plot_colors=_plot_colors)
+        _f.plot_curve(_x, interpolate_gaps(c if d == 'Cancer' else r), plot_colors=_plot_colors)
         _f.finish()
     plot('Cancer')
     plot('Reviews')
@@ -64,13 +64,13 @@ def acc_between_params_same(_file, title, y_axis, x_axis, it, _OUT=OUT):
 
 def RP():
     # RP SSE
-    #compare_between_params('SSE.csv', "RP - Sum of Squared Error", "K Clusters", "Squared Error", RP_DIMS_C, _OUT='RP')
+    #compare_between_params('SSE.csv', "RP - Sum of Squared Error", "K Clusters", "Squared Error", RP_DIMS_R, _OUT='RP')
     #compare_between_params('logliklihood.csv', "RP - Log Likelihood", "K Clusters", "Log Likelihood", RP_DIMS_C, _OUT='RP')
 
     # RP Comparsion
     compare_between_params('reviews_comparison.csv', "RP - Comparsion in Iterations", "Iteration", "PairwiseDistCorr", [0.6, 0.7, 0.8, 0.9], _OUT='RP')
 
-    acc_between_params('reviews_acc.csv', "Accuracy - RP Reduced - Reviews", "K Clusters", "Accuracy", RP_DIMS_C, _OUT='RP')
+    acc_between_params('reviews_acc.csv', "Accuracy - RP Reduced - Reviews", "K Clusters", "Accuracy", RP_DIMS_R, _OUT='RP')
     acc_between_params('cancer_acc.csv', "Accuracy - RP Reduced - Cancer", "K Clusters", "Accuracy", RP_DIMS_C, _OUT='RP')
 
 def ICA():
@@ -99,10 +99,10 @@ def ICA():
     compare_between_params('SSE.csv', "ICA - Sum of Squared Error", "K Clusters", "Squared Error", [5, 13, 21, 29, 37, 45, 53, 61], _OUT='ICA')
     compare_between_params('logliklihood.csv', "ICA - Log Likelihood", "K Clusters", "Log Likelihood", [5, 13, 21, 29, 37, 45, 53, 61], _OUT='ICA')
 
-def PCA():
+def PCA(): # pylint: disable=R0915
     acc_between_params('reviews_acc.csv', "PCA Reduced - KMeans Accuracy - Reviews", "K Clusters", "Accuracy", [0.6, 0.7, 0.8, 0.9], _OUT='PCA')
     acc_between_params('cancer_acc.csv', "PCA Reduced - KMeans Accuracy - Cancer", "K Clusters", "Accuracy", [0.6, 0.7, 0.8, 0.9], _OUT='PCA')
-    return
+
     # PCA Mutual Information
     acc_between_params('reviews_adjMI.csv', "Mutual Information - PCA Reduced - Reviews", "K Clusters", "Accuracy", [0.6, 0.7, 0.8, 0.9], _OUT='PCA')
     acc_between_params('cancer_adjMI.csv', "Mutual Information - PCA Reduced - Cancer", "K Clusters", "Accuracy", [0.6, 0.7, 0.8, 0.9], _OUT='PCA')
@@ -172,7 +172,7 @@ def PCA():
     f.plot_curve("0.9", x, interpolate_gaps(c_km_9[1][:-5]), plot_colors=_plot_colors)
     f.finish()
 
-def DEFAULT():
+def DEFAULT(): # pylint: disable=R0915
     # GMM Accuracy - Cancer
     x, c_gmm, c_km = read_csv_sideways('./OUTPUT/{}/cancer_acc.csv'.format(OUT))
     f = Figures("EM Accuracy - Cancer", "K Clusters", "Accuracy")
@@ -250,9 +250,13 @@ def DEFAULT():
     f.finish()
 
 if __name__ == '__main__':
-    if 'RP' in sys.argv: RP()
-    if 'ICA' in sys.argv: ICA()
-    if 'PCA' in sys.argv: PCA()
-    if 'DEFAULT' in sys.argv: DEFAULT()
+    if 'RP' in sys.argv:
+        RP()
+    if 'ICA' in sys.argv:
+        ICA()
+    if 'PCA' in sys.argv:
+        PCA()
+    if 'DEFAULT' in sys.argv:
+        DEFAULT()
 
     plt.show()

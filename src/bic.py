@@ -47,11 +47,6 @@ def find_best(X, bic): #pylint: disable
                 lowest_bic = bic[-1]
     return lowest_bic
 
-def main(X, _):
-    bic = []
-    bic = np.array(bic)
-    plot_gmms(bic)
-
 def comparePCA(p, ds):
     global BASE
     bests = []
@@ -98,10 +93,10 @@ def plot_gmms(bic, ds=""):
 
     # Plot the BIC scores
     spl = plt.subplot(2, 1, 1)
-    for i, (_, color) in enumerate(zip(cv_types, color_iter)):
-        xpos = np.array(n_components_range) + 1.7 * (i - 2)
-        bars.append(plt.bar(xpos, bic[i * len(n_components_range):
-                                      (i + 1) * len(n_components_range)],
+    for j, (_, color) in enumerate(zip(cv_types, color_iter)):
+        xpos = np.array(n_components_range) + 1.7 * (j - 2)
+        bars.append(plt.bar(xpos, bic[j * len(n_components_range):
+                                      (j + 1) * len(n_components_range)],
                             width=1.7, color=color))
     plt.xticks(n_components_range)
     plt.ylim([bic.min() * 1.01 - .01 * bic.max(), bic.max()])
@@ -124,7 +119,7 @@ def plot_results(X, Y_, means, covariances, index, title):
     color_iter = itertools.cycle(['navy', 'c', 'cornflowerblue', 'gold', 'darkorange'])
 
     splot = plt.subplot(2, 1, 1 + index)
-    for i, (mean, covar, color) in enumerate(zip(
+    for j, (mean, covar, color) in enumerate(zip(
             means, covariances, color_iter)):
         v, w = linalg.eigh(covar)
         v = 2. * np.sqrt(2.) * np.sqrt(v)
@@ -132,9 +127,9 @@ def plot_results(X, Y_, means, covariances, index, title):
         # as the DP will not use every component it has access to
         # unless it needs it, we shouldn't plot the redundant
         # components.
-        if not np.any(Y_ == i):
+        if not np.any(Y_ == j):
             continue
-        plt.scatter(X[Y_ == i, 0], X[Y_ == i, 1], .8, color=color)
+        plt.scatter(X[Y_ == j, 0], X[Y_ == j, 1], .8, color=color)
 
         # Plot an ellipse to show the Gaussian component
         angle = np.arctan(u[1] / u[0])
@@ -174,9 +169,11 @@ if __name__ == '__main__':
             c_components = [8, 10, 14, 18, 25, 35, 45, 55, 65, 75]
             n_components_range = r_components
             datasets = ['0.6-', '0.7-', '0.8-', '0.9-']
-            [comparePCA([i], 'Reviews') for i in datasets]
+            for i in datasets:
+                comparePCA([i], 'Reviews')
             n_components_range = c_components
-            [comparePCA([i], 'Cancer') for i in datasets]
+            for i in datasets:
+                comparePCA([i], 'Cancer')
             plt.show()
         if 'ICA' in sys.argv:
             n_components_range = [i for i in range(5, 62, 8)]
@@ -186,6 +183,7 @@ if __name__ == '__main__':
         if 'RP' in sys.argv:
             n_components_range = [i for i in range(5, 62, 8)]
             r_dims = c_dims = ['%s-' % i for i in range(16, 80, 7)]
-            [compare('RP', [i], [i]) for i in r_dims]
+            for i in r_dims:
+                compare('RP', [i], [i])
             #compare('RP', [], ['72-'])
             #compare('RP', [], ['65-'])

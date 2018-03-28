@@ -131,22 +131,25 @@ def RP():
         c_X, _ = _c
         print('Cancer at %s dimensions' % p)
         main(c_X, 'Cancer', ' (%s dims)' % p)
-    [runitc(i) for i in ['16', '23', '30', '37', '44']]
+    for i in ['16', '23', '30', '37', '44']:
+        runitc(i)
     def runitr(p):
         _r, _c = get_data('{}/RP'.format(OUTPUT), '%s-' % p)
         r_X, _ = _r
         print('Reviews at %s dimensions' % p)
         main(r_X, 'Reviews', ' (%s dims)' % p)
-    [runitr(i) for i in ['44', '51', '65', '72', '79']]
+    for i in ['44', '51', '65', '72', '79']:
+        runitr(i)
 
 def PCA():
     def runit(p):
         _r, _c = get_data('{}/PCA'.format(OUTPUT), '%s-' % p)
         r_X, _ = _r
         c_X, _ = _c
-        #main(r_X)
+        main(r_X)
         main(c_X)
-    [runit(i) for i in ['0.6']]#, '0.7', '0.8', '0.9']]
+    for i in ['0.6']: #, '0.7', '0.8', '0.9']]
+        runit(i)
 
 if __name__ == '__main__':
     if sys.argv[1] == 'ICA':
