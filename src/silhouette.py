@@ -12,6 +12,7 @@ import matplotlib.cm as cm
 import numpy as np
 
 from helpers.dim_reduction import get_data
+from helpers.constants import SVD_DIMS_R, SVD_DIMS_C
 
 print(__doc__)
 
@@ -152,7 +153,20 @@ def PCA():
         runit(i)
 
 def SVD():
-    print('run SVD silhouette plots')
+    global range_n_clusters
+    range_n_clusters = [18, 19, 20, 21, 22]#[16, 30, 45]
+    def runitc(p):
+        c_X, _ = get_data('{}/SVD'.format(OUTPUT), '%s-' % p, 'c')
+        print('Cancer at %s dimensions' % p)
+        main(c_X, 'Cancer', ' (%s dims)' % p)
+    for i in SVD_DIMS_C:
+        runitc(i)
+    def runitr(p):
+        r_X, _ = get_data('{}/SVD'.format(OUTPUT), '%d-' % p, 'r')
+        print('Reviews at %s dimensions' % p)
+        main(r_X, 'Reviews', ' (%s dims)' % p)
+    for i in SVD_DIMS_R:
+        runitr(i)
 
 if __name__ == '__main__':
     if sys.argv[1] == 'ICA':

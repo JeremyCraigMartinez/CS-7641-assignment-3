@@ -78,6 +78,10 @@ def acc_between_params_same(_file, title, y_axis, x_axis, it, _OUT=OUT):
     _f.finish()
 
 def SVD():
+    # SVD Accuracy
+    acc_between_params('reviews_acc.csv', "Accuracy - SVD Reduced - Reviews", "K Clusters", "Accuracy", SVD_DIMS_R[1:], _OUT='SVD')
+    acc_between_params('cancer_acc.csv', "Accuracy - SVD Reduced - Cancer", "K Clusters", "Accuracy", SVD_DIMS_C[:-1], _OUT='SVD')
+
     # SVD SSE
     single_col_compare('SSE.csv', "Cancer - SVD - Sum of Squared Error", "K Clusters", "Squared Error", SVD_DIMS_C, _OUT='SVD')
     single_col_compare('SSE.csv', "Reviews - SVD - Sum of Squared Error", "K Clusters", "Squared Error", SVD_DIMS_R, _OUT='SVD', is_r=True)
