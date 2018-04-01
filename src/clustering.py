@@ -56,6 +56,8 @@ def file_it(name, alg, X, y, y_pred, it=None):
     cols = list(range(data2.shape[1]))
     cols[-1] = 'Class'
     data2.columns = cols
+    if len(args) == 1:
+        args.append("")
     data2.to_hdf('{}/datasets-w-cluster/{}-{}-datasets.{}.hdf'.format(BASE, it, args[1][:-1], alg), name, complib='blosc', complevel=9)
 
 def fit(ignore=None):
@@ -73,8 +75,9 @@ def fit(ignore=None):
         km.fit(X_train)
         gmm.fit(X_train)
 
-        file_it(name, 'km', X_train, y_train, km.predict(X_train), it=it)
-        file_it(name, 'gmm', X_train, y_train, gmm.predict(X_train), it=it)
+        if args[0] != 'BASE':
+            file_it(name, 'km', X_train, y_train, km.predict(X_train), it=it)
+            file_it(name, 'gmm', X_train, y_train, gmm.predict(X_train), it=it)
 
         SSE[it][name] = km.score(X_train)
         ll[it][name] = gmm.score(X_train)

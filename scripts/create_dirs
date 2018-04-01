@@ -3,7 +3,44 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
 mkdir -p $DIR/../OUTPUT/BASE
-mkdir -p $DIR/../OUTPUT/ICA
-mkdir -p $DIR/../OUTPUT/PCA
-mkdir -p $DIR/../OUTPUT/RF
-mkdir -p $DIR/../OUTPUT/RP
+
+mkdir -p $DIR/../OUTPUT/ICA/datasets-w-cluster
+mkdir -p $DIR/../OUTPUT/ICA/13
+mkdir -p $DIR/../OUTPUT/ICA/21
+mkdir -p $DIR/../OUTPUT/ICA/29
+mkdir -p $DIR/../OUTPUT/ICA/37
+mkdir -p $DIR/../OUTPUT/ICA/45
+mkdir -p $DIR/../OUTPUT/ICA/5
+mkdir -p $DIR/../OUTPUT/ICA/53
+mkdir -p $DIR/../OUTPUT/ICA/61
+
+mkdir -p $DIR/../OUTPUT/PCA/datasets-w-cluster
+mkdir -p $DIR/../OUTPUT/PCA/0.6
+mkdir -p $DIR/../OUTPUT/PCA/0.7
+mkdir -p $DIR/../OUTPUT/PCA/0.8
+mkdir -p $DIR/../OUTPUT/PCA/0.9
+
+mkdir -p $DIR/../OUTPUT/RP/datasets-w-cluster
+mkdir -p $DIR/../OUTPUT/RP/16
+mkdir -p $DIR/../OUTPUT/RP/23
+mkdir -p $DIR/../OUTPUT/RP/30
+mkdir -p $DIR/../OUTPUT/RP/37
+mkdir -p $DIR/../OUTPUT/RP/44
+mkdir -p $DIR/../OUTPUT/RP/51
+mkdir -p $DIR/../OUTPUT/RP/58
+mkdir -p $DIR/../OUTPUT/RP/65
+mkdir -p $DIR/../OUTPUT/RP/72
+mkdir -p $DIR/../OUTPUT/RP/79
+
+mkdir -p $DIR/../OUTPUT/SVD/datasets-w-cluster
+mkdir -p $DIR/../OUTPUT/SVD/16
+mkdir -p $DIR/../OUTPUT/SVD/23
+mkdir -p $DIR/../OUTPUT/SVD/30
+mkdir -p $DIR/../OUTPUT/SVD/37
+mkdir -p $DIR/../OUTPUT/SVD/44
+mkdir -p $DIR/../OUTPUT/SVD/51
+mkdir -p $DIR/../OUTPUT/SVD/58
+mkdir -p $DIR/../OUTPUT/SVD/65
+mkdir -p $DIR/../OUTPUT/SVD/72
+mkdir -p $DIR/../OUTPUT/SVD/79
+mkdir -p $DIR/../OUTPUT/SVD/8
