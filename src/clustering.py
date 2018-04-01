@@ -92,7 +92,7 @@ def fit(ignore=None):
     adjMI = pd.Panel(adjMI)
 
     SSE.to_csv('{}/SSE.csv'.format(OUT))
-    ll.to_csv('{}/loglitklihood.csv'.format(OUT))
+    ll.to_csv('{}/logliklihood.csv'.format(OUT))
     if ignore != 'reviews':
         acc.ix[:, :, 'reviews'].to_csv('{}/{}_acc.csv'.format(OUT, 'reviews'))
         adjMI.ix[:, :, 'reviews'].to_csv('{}/{}_adjMI.csv'.format(OUT, 'reviews'))

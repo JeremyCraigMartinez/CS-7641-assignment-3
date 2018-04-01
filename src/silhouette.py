@@ -151,6 +151,9 @@ def PCA():
     for i in ['0.6']: #, '0.7', '0.8', '0.9']]
         runit(i)
 
+def SVD():
+    print('run SVD silhouette plots')
+
 if __name__ == '__main__':
     if sys.argv[1] == 'ICA':
         ICA()
@@ -158,3 +161,5 @@ if __name__ == '__main__':
         RP()
     elif sys.argv[1] == 'PCA':
         PCA()
+    elif sys.argv[1] == 'SVD':
+        SVD()

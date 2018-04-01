@@ -7,7 +7,7 @@ import numpy as np
 
 from helpers.read_csvs import read_csv, read_csv_sideways, interpolate_gaps
 from helpers.figures import Figures
-from helpers.constants import RP_DIMS_R, RP_DIMS_C
+from helpers.constants import RP_DIMS, SVD_DIMS_R, SVD_DIMS_C
 
 OUT = sys.argv[1] if len(sys.argv) >= 2 else 'BASE'
 
@@ -28,6 +28,18 @@ def RP_it_comparsion(title, y_axis, x_axis, _OUT=""):
         _f.finish()
     plot('Cancer', 'cancer_comparison.csv')
     plot('Reviews', 'reviews_comparison.csv')
+
+def single_col_compare(_file, title, y_axis, x_axis, it, _OUT=OUT, is_r=False):
+    _f = Figures("%s" % (title), y_axis, x_axis)
+    _f.start()
+    _x = c_clusters
+    for i in it:
+        if is_r and i == 44:
+            _, _, x = read_csv('./OUTPUT/{}/{}/{}'.format(_OUT, i, _file), 3)
+        else:
+            _, x = read_csv('./OUTPUT/{}/{}/{}'.format(_OUT, i, _file), 2)
+        _f.plot_curve(str(i), _x, interpolate_gaps(x), plot_colors=_plot_colors)
+    _f.finish()
 
 def compare_between_params(_file, title, y_axis, x_axis, it, _OUT=OUT):
     def plot(d):
@@ -66,18 +78,25 @@ def acc_between_params_same(_file, title, y_axis, x_axis, it, _OUT=OUT):
     _f.finish()
 
 def SVD():
-    print('run it yo')
+    # SVD SSE
+    single_col_compare('SSE.csv', "Cancer - SVD - Sum of Squared Error", "K Clusters", "Squared Error", SVD_DIMS_C, _OUT='SVD')
+    single_col_compare('SSE.csv', "Reviews - SVD - Sum of Squared Error", "K Clusters", "Squared Error", SVD_DIMS_R, _OUT='SVD', is_r=True)
+
+    # SVD log likelihood
+    # loglitklihood... typo when running clustering
+    single_col_compare('loglitklihood.csv', "Cancer - SVD - Log Likelihood", "K Clusters", "Log Likelihood", SVD_DIMS_C, _OUT='SVD')
+    single_col_compare('loglitklihood.csv', "Reviews - SVD - Log Likelihood", "K Clusters", "Log Likelihood", SVD_DIMS_R, _OUT='SVD', is_r=True)
 
 def RP():
     # RP SSE
-    compare_between_params('SSE.csv', "RP - Sum of Squared Error", "K Clusters", "Squared Error", RP_DIMS_R, _OUT='RP')
-    compare_between_params('logliklihood.csv', "RP - Log Likelihood", "K Clusters", "Log Likelihood", RP_DIMS_C, _OUT='RP')
+    compare_between_params('SSE.csv', "RP - Sum of Squared Error", "K Clusters", "Squared Error", RP_DIMS, _OUT='RP')
+    compare_between_params('logliklihood.csv', "RP - Log Likelihood", "K Clusters", "Log Likelihood", RP_DIMS, _OUT='RP')
 
     # RP Comparsion
     RP_it_comparsion("Comparsion in Iterations", "Iteration", "PairwiseDistCorr", _OUT='RP')
 
-    acc_between_params('reviews_acc.csv', "Accuracy - RP Reduced - Reviews", "K Clusters", "Accuracy", RP_DIMS_R, _OUT='RP')
-    acc_between_params('cancer_acc.csv', "Accuracy - RP Reduced - Cancer", "K Clusters", "Accuracy", RP_DIMS_C, _OUT='RP')
+    acc_between_params('reviews_acc.csv', "Accuracy - RP Reduced - Reviews", "K Clusters", "Accuracy", RP_DIMS, _OUT='RP')
+    acc_between_params('cancer_acc.csv', "Accuracy - RP Reduced - Cancer", "K Clusters", "Accuracy", RP_DIMS, _OUT='RP')
 
 def ICA():
     # ICA Mutual Information - special
@@ -256,6 +275,8 @@ def DEFAULT(): # pylint: disable=R0915
     f.finish()
 
 if __name__ == '__main__':
+    if 'SVD' in sys.argv:
+        SVD()
     if 'RP' in sys.argv:
         RP()
     if 'ICA' in sys.argv:
