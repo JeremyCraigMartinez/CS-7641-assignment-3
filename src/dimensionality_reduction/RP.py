@@ -22,11 +22,12 @@ c_X, c_y = c
 
 r_dims = c_dims = [i for i in range(16, 80, 7)] # final has 46 dims, no reduction just transformation. Interesting base case
 
-def rpFluctuation(dims, ds):
+def rpFluctuation(dims, ds, X):
     tmp = defaultdict(dict)
     for i, dim in product(range(10), dims):
+        print(i, dim)
         rp = SparseRandomProjection(random_state=i, n_components=dim)
-        tmp[dim][i] = pairwiseDistCorr(rp.fit_transform(r_X), r_X)
+        tmp[dim][i] = pairwiseDistCorr(rp.fit_transform(X), X)
     tmp = pd.DataFrame(tmp).T
     tmp.to_csv('{}/{}_comparison.csv'.format(OUT, ds))
 
@@ -57,8 +58,8 @@ def main():
         run_dim_alg(c_X, c_y, 'cancer', decomp2, val, OUT)
 
 if __name__ == '__main__':
-    if 'fluc' in sys.argv:
-        rpFluctuation(r_dims, 'reviews')
-        rpFluctuation(c_dims, 'cancer')
+    if '--compare' in sys.argv:
+        rpFluctuation(r_dims, 'reviews', r_X)
+        rpFluctuation(c_dims, 'cancer', c_X)
     else:
         main()

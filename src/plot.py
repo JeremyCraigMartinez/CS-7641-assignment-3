@@ -15,16 +15,19 @@ _plot_colors = ('r', 'g', 'b', 'c', 'darkorange', 'black', 'purple', 'y', 'm', '
 
 from helpers.clustering import c_clusters
 
-def RP_it_comparsion(_file, title, y_axis, x_axis, _OUT=OUT):
-    def plot(d):
+def RP_it_comparsion(title, y_axis, x_axis, _OUT=""):
+    def plot(d, _file):
         _f = Figures("%s - %s" % (title, d), y_axis, x_axis)
         _f.start()
-        _x = c_clusters
-        _, c, r = read_csv('./OUTPUT/{}/{}'.format(_OUT, _file), 10)
-        _f.plot_curve(_x, interpolate_gaps(c if d == 'Cancer' else r), plot_colors=_plot_colors)
+        lines = read_csv_sideways('./OUTPUT/{}/{}'.format(_OUT, _file), rows=10)
+        its = lines[0]
+        lines = lines[1:]
+        for i, _ in enumerate(lines):
+            l = lines[i]
+            _f.plot_curve(l[0], its, interpolate_gaps(l[1]), plot_colors=_plot_colors)
         _f.finish()
-    plot('Cancer')
-    plot('Reviews')
+    plot('Cancer', 'cancer_comparison.csv')
+    plot('Reviews', 'reviews_comparison.csv')
 
 def compare_between_params(_file, title, y_axis, x_axis, it, _OUT=OUT):
     def plot(d):
@@ -62,13 +65,16 @@ def acc_between_params_same(_file, title, y_axis, x_axis, it, _OUT=OUT):
     plot('KMeans')
     _f.finish()
 
+def SVD():
+    print('run it yo')
+
 def RP():
     # RP SSE
-    #compare_between_params('SSE.csv', "RP - Sum of Squared Error", "K Clusters", "Squared Error", RP_DIMS_R, _OUT='RP')
-    #compare_between_params('logliklihood.csv', "RP - Log Likelihood", "K Clusters", "Log Likelihood", RP_DIMS_C, _OUT='RP')
+    compare_between_params('SSE.csv', "RP - Sum of Squared Error", "K Clusters", "Squared Error", RP_DIMS_R, _OUT='RP')
+    compare_between_params('logliklihood.csv', "RP - Log Likelihood", "K Clusters", "Log Likelihood", RP_DIMS_C, _OUT='RP')
 
     # RP Comparsion
-    compare_between_params('reviews_comparison.csv', "RP - Comparsion in Iterations", "Iteration", "PairwiseDistCorr", [0.6, 0.7, 0.8, 0.9], _OUT='RP')
+    RP_it_comparsion("Comparsion in Iterations", "Iteration", "PairwiseDistCorr", _OUT='RP')
 
     acc_between_params('reviews_acc.csv', "Accuracy - RP Reduced - Reviews", "K Clusters", "Accuracy", RP_DIMS_R, _OUT='RP')
     acc_between_params('cancer_acc.csv', "Accuracy - RP Reduced - Cancer", "K Clusters", "Accuracy", RP_DIMS_C, _OUT='RP')

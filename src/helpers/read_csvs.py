@@ -13,13 +13,12 @@ def read_csv(path_name, columns):
         cols.append(data.values[0:size, c])
     return cols
 
-def read_csv_sideways(path_name):
+def read_csv_sideways(path_name, rows=2):
     data = pd.read_csv(path_name, sep=",")
-    return (
-        np.array(data.columns[1:]).astype(np.double),
-        (data.values[0][0], np.array(data.values[0][1:]).astype(np.double)),
-        (data.values[1][0], np.array(data.values[1][1:]).astype(np.double)),
-    )
+    csv = [np.array(data.columns[1:]).astype(np.double)]
+    for i in range(rows):
+        csv.append((data.values[i][0], np.array(data.values[i][1:]).astype(np.double)))
+    return csv
 
 def interpolate_gaps(data):
     new_data = []
