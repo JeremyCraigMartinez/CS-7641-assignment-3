@@ -103,6 +103,10 @@ def RP():
     acc_between_params('cancer_acc.csv', "Accuracy - RP Reduced - Cancer", "K Clusters", "Accuracy", RP_DIMS, _OUT='RP')
 
 def ICA():
+    # ICA Accuracy
+    acc_between_params('reviews_acc.csv', "Accuracy - ICA Reduced - Reviews", "K Clusters", "Accuracy", [5, 13, 21, 29, 37, 45, 53, 61], _OUT='ICA')
+    acc_between_params('cancer_acc.csv', "Accuracy - ICA Reduced - Cancer", "K Clusters", "Accuracy", [5, 13, 21, 29, 37, 45, 53, 61], _OUT='ICA')
+
     # ICA Mutual Information - special
     acc_between_params_same('reviews_adjMI.csv', "Mutual Information - ICA Reduced - Reviews", "K Clusters/Components", "Adjusted Mutual Information", [13, 21], _OUT='ICA')
     acc_between_params_same('cancer_adjMI.csv', "Mutual Information - ICA Reduced - Cancer", "K Clusters/Components", "Adjusted Mutual Information", [13, 61], _OUT='ICA')
@@ -119,10 +123,6 @@ def ICA():
     f.plot_curve("cancer", x, ck, plot_colors=_plot_colors)
     f.plot_curve("reviews", x, rk, plot_colors=_plot_colors)
     f.finish()
-
-    # ICA Accuracy
-    acc_between_params('reviews_acc.csv', "Accuracy - ICA Reduced - Reviews", "K Clusters", "Accuracy", [5, 13, 21, 29, 37, 45, 53, 61], _OUT='ICA')
-    acc_between_params('cancer_acc.csv', "Accuracy - ICA Reduced - Cancer", "K Clusters", "Accuracy", [5, 13, 21, 29, 37, 45, 53, 61], _OUT='ICA')
 
     # SSE
     compare_between_params('SSE.csv', "ICA - Sum of Squared Error", "K Clusters", "Squared Error", [5, 13, 21, 29, 37, 45, 53, 61], _OUT='ICA')

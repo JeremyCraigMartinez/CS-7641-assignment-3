@@ -11,8 +11,9 @@ dir_path = dirname(realpath(__file__))
 sys.path.insert(0, '{}/..'.format(dir_path))
 
 from helpers.dim_reduction import run_dim_alg, get_data
+from helpers.constants import ICA_DIMS
 
-r_dims = c_dims = [i for i in range(5, 62, 8)]
+r_dims = c_dims = ICA_DIMS
 
 OUT = '{}/../../OUTPUT/ICA'.format(dir_path)
 BASE = '{}/../../OUTPUT/BASE'.format(dir_path)

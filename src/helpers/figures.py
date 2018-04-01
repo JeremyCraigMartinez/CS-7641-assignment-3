@@ -110,3 +110,21 @@ class Figures:
             plt.semilogx(param_range, values, label=label, color=plot_colors[self.num])
 
         self.num += 1
+
+def bar_plot(model, y, labels):
+    print(y)
+
+    width = 0.5       # the width of the bars
+
+    _, ax = plt.subplots()
+    ax.bar(labels[0], y[0], width, color='r')
+    ax.bar(labels[1], y[1], width, color='b')
+    ax.bar(labels[2], y[2], width, color='g')
+    ax.bar(labels[3], y[3], width, color='orange')
+    ax.bar(labels[4], y[4], width, color='y')
+
+    # add some text for labels, title and axes ticks
+    ax.set_ylabel('Accuracy')
+    ax.set_title('%s - Best Accuracy per Dimensionality Reduction Alg.' % model)
+
+    plt.show()

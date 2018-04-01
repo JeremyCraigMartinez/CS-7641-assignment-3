@@ -11,6 +11,7 @@ dir_path = dirname(realpath(__file__))
 sys.path.insert(0, '{}/..'.format(dir_path))
 
 from helpers.dim_reduction import run_dim_alg, get_data
+from helpers.constants import PCA_DIMS
 
 OUT = '{}/../../OUTPUT/PCA'.format(dir_path)
 BASE = '{}/../../OUTPUT/BASE'.format(dir_path)
@@ -24,7 +25,7 @@ r_X, r_y = r
 c_X, c_y = c
 
 def main():
-    for i in [0.6, 0.7, 0.8, 0.9]:
+    for i in PCA_DIMS:
         decomp1 = PCA(n_components=i, random_state=10)
         decomp2 = PCA(n_components=i, random_state=10)
         run_dim_alg(r_X, r_y, 'reviews', decomp1, i, OUT)
