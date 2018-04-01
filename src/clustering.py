@@ -46,6 +46,18 @@ else:
 cachedir = mkdtemp()
 memory = Memory(cachedir=cachedir, verbose=10)
 
+def file_it(name, alg, X, y, y_pred, it=None):
+    tmp = []
+    for i, _ in enumerate(X):
+        tmp.append(np.append(X[i], y_pred[i]))
+    X2 = np.array(tmp)
+    print('NUM CLUSTERS: %s' % it)
+    data2 = pd.DataFrame(np.hstack((X2, np.atleast_2d(y).T)))
+    cols = list(range(data2.shape[1]))
+    cols[-1] = 'Class'
+    data2.columns = cols
+    data2.to_hdf('{}/datasets-w-cluster/{}-{}-datasets.{}.hdf'.format(BASE, it, args[1][:-1], alg), name, complib='blosc', complevel=9)
+
 def fit(ignore=None):
     st = clock()
     SSE = defaultdict(dict)
@@ -60,6 +72,9 @@ def fit(ignore=None):
         gmm.set_params(n_components=it)
         km.fit(X)
         gmm.fit(X)
+
+        file_it(name, 'km', X, y, km.predict(X), it=it)
+        file_it(name, 'gmm', X, y, gmm.predict(X), it=it)
 
         SSE[it][name] = km.score(X)
         ll[it][name] = gmm.score(X)
@@ -130,12 +145,12 @@ if __name__ == '__main__':
 
     processes = []
     processes.append(Process(target=fit, args=(_ignore,)))
-    if _ignore != 'reviews':
-        processes.append(Process(target=other, args=('km', r_X, r_y, 'reviews', r_clusters,)))
-        processes.append(Process(target=other, args=('gmm', r_X, r_y, 'reviews', r_clusters,)))
-    if _ignore != 'cancer':
-        processes.append(Process(target=other, args=('km', c_X, c_y, 'cancer', c_clusters,)))
-        processes.append(Process(target=other, args=('gmm', c_X, c_y, 'cancer', c_clusters,)))
+    #if _ignore != 'reviews':
+    #    processes.append(Process(target=other, args=('km', r_X, r_y, 'reviews', r_clusters,)))
+    #    processes.append(Process(target=other, args=('gmm', r_X, r_y, 'reviews', r_clusters,)))
+    #if _ignore != 'cancer':
+    #    processes.append(Process(target=other, args=('km', c_X, c_y, 'cancer', c_clusters,)))
+    #    processes.append(Process(target=other, args=('gmm', c_X, c_y, 'cancer', c_clusters,)))
 
     for p in processes:
         p.start()

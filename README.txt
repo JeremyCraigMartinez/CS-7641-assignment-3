@@ -35,4 +35,43 @@ Plotting code was  written in Python 3.5, using Pandas 0.18.0 and matplotlib 1.5
 
 Within the output folders, the data files are csv files. They are labelled by dataset and experiment type.
 
+# Run clustering for all alg and all dimensions
 
+```bash
+python src/clustering.py --delim PCA 0.6- -r &
+python src/clustering.py --delim PCA 0.7- -r &
+python src/clustering.py --delim PCA 0.8- -r &
+python src/clustering.py --delim PCA 0.9- -r
+
+python src/clustering.py --delim ICA 13- -r &
+python src/clustering.py --delim ICA 21- -r &
+python src/clustering.py --delim ICA 29- -r &
+python src/clustering.py --delim ICA 37- -r &
+python src/clustering.py --delim ICA 45- -r &
+python src/clustering.py --delim ICA 5-  -r &
+python src/clustering.py --delim ICA 53- -r &
+python src/clustering.py --delim ICA 61- -r
+
+python src/clustering.py --delim RP 16- -r &
+python src/clustering.py --delim RP 23- -r &
+python src/clustering.py --delim RP 30- -r &
+python src/clustering.py --delim RP 37- -r &
+python src/clustering.py --delim RP 44- -r
+python src/clustering.py --delim RP 51- -r &
+python src/clustering.py --delim RP 58- -r &
+python src/clustering.py --delim RP 65- -r &
+python src/clustering.py --delim RP 72- -r &
+python src/clustering.py --delim RP 79- -r
+
+python src/clustering.py --delim SVD 16- -r &
+python src/clustering.py --delim SVD 23- -r &
+python src/clustering.py --delim SVD 30- -r &
+python src/clustering.py --delim SVD 37- -r &
+python src/clustering.py --delim SVD 44- -r &
+python src/clustering.py --delim SVD 51- -r
+python src/clustering.py --delim SVD 58- -r &
+python src/clustering.py --delim SVD 65- -r &
+python src/clustering.py --delim SVD 72- -r &
+python src/clustering.py --delim SVD 79- -r &
+python src/clustering.py --delim SVD 8- -r
+```

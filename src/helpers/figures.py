@@ -117,11 +117,15 @@ def bar_plot(model, y, labels):
     width = 0.5       # the width of the bars
 
     _, ax = plt.subplots()
-    ax.bar(labels[0], y[0], width, color='r')
-    ax.bar(labels[1], y[1], width, color='b')
-    ax.bar(labels[2], y[2], width, color='g')
-    ax.bar(labels[3], y[3], width, color='orange')
-    ax.bar(labels[4], y[4], width, color='y')
+    ax.bar(labels[0], y[0], width, color='brown')
+    ax.bar(labels[1], y[1], width, color='red')
+    ax.bar(labels[2], y[2], width, color='pink')
+    ax.bar(labels[3], y[3], width, color='green')
+    ax.bar(labels[4], y[4], width, color='lightgreen')
+    ax.bar(labels[5], y[5], width, color='blue')
+    ax.bar(labels[6], y[6], width, color='lightblue')
+    ax.bar(labels[7], y[7], width, color='yellow')
+    ax.bar(labels[8], y[8], width, color='lightyellow')
 
     # add some text for labels, title and axes ticks
     ax.set_ylabel('Accuracy')

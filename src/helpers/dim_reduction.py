@@ -16,18 +16,18 @@ sys.path.insert(0, '{}/..'.format(dir_path))
 
 from helpers.clustering import nn_arch, nn_reg
 
-def get_data(BASE, prefix="", ds=None):
+def get_data(BASE, prefix="", ds=None, suffix="datasets.hdf"):
     np.random.seed(0)
-    print('{}/{}datasets.hdf'.format(BASE, prefix))
+    print('{}/{}{}'.format(BASE, prefix, suffix))
     def cancer():
-        cancer_data = pd.read_hdf('{}/{}datasets.hdf'.format(BASE, prefix), 'cancer')
+        cancer_data = pd.read_hdf('{}/{}{}'.format(BASE, prefix, suffix), 'cancer')
         c_X = cancer_data.drop('Class', 1).copy().values
         c_y = cancer_data['Class'].copy().values
         c_X = StandardScaler().fit_transform(c_X)
         return (c_X, c_y)
 
     def reviews():
-        reviews_data = pd.read_hdf('{}/{}datasets.hdf'.format(BASE, prefix), 'reviews')
+        reviews_data = pd.read_hdf('{}/{}{}'.format(BASE, prefix, suffix), 'reviews')
         r_X = reviews_data.drop('Class', 1).copy().values
         r_y = reviews_data['Class'].copy().values
         r_X = StandardScaler().fit_transform(r_X)
@@ -48,6 +48,7 @@ def run_dim_alg(X, y, dname, decomp, p, OUT):
     data2.columns = cols
     data2.to_hdf('{}/{}-datasets.hdf'.format(OUT, p), dname, complib='blosc', complevel=9)
 
+# just for testing locally, ignore below blocks
 def run_nn_with_eigen_weight_vector(X, y, name, dname, dims, decomposition, OUT, filt=False):
     grid = None
     if name == 'pca':
