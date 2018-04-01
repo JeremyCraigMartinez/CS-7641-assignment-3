@@ -6,7 +6,7 @@ import numpy as np
 from sklearn.preprocessing import StandardScaler
 from sklearn.pipeline import Pipeline
 from sklearn.neural_network import MLPClassifier
-from sklearn.model_selection import GridSearchCV
+from sklearn.model_selection import GridSearchCV, train_test_split
 from matplotlib import cm
 
 cmap = cm.get_cmap('Spectral')
@@ -15,6 +15,15 @@ dir_path = dirname(realpath(__file__))
 sys.path.insert(0, '{}/..'.format(dir_path))
 
 from helpers.clustering import nn_arch, nn_reg
+
+def get_data_split(BASE, prefix="", ds=None, suffix="datasets.hdf"):
+    data = get_data(BASE, prefix=prefix, ds=ds, suffix=suffix)
+    if ds is None:
+        r, c = data
+        r = train_test_split(r[0], r[1])
+        c = train_test_split(c[0], c[1])
+        return r, c
+    return train_test_split(data[0], data[1])
 
 def get_data(BASE, prefix="", ds=None, suffix="datasets.hdf"):
     np.random.seed(0)

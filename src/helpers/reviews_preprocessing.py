@@ -2,7 +2,6 @@ from os.path import dirname, realpath
 import re
 
 import pandas as pd
-from sklearn.model_selection import train_test_split
 from sklearn.feature_extraction.text import CountVectorizer
 
 dir_path = dirname(realpath(__file__))
@@ -41,4 +40,4 @@ def get_train_test_set():
     X, y = get_X_Y(corpus, dataset)
 
     # X_train, X_test, y_train, y_test
-    return train_test_split(X, y, test_size=0.2)
+    return X, y

@@ -1,7 +1,6 @@
 from os.path import dirname, realpath
 
 from sklearn import preprocessing
-import sklearn.model_selection as ms
 import pandas as pd
 import numpy as np
 
@@ -108,4 +107,4 @@ def get_train_test_set():
     cleaned_data = clean(dataset)
 
     X, y = get_X_Y(cleaned_data)
-    return ms.train_test_split(X, y, test_size=0.2, random_state=0, stratify=y)
+    return X, y

@@ -19,7 +19,7 @@ from sklearn.model_selection import GridSearchCV
 from sklearn.externals.joblib import Memory
 
 from helpers.clustering import cluster_acc, myGMM, nn_arch, nn_reg, r_clusters, c_clusters
-from helpers.dim_reduction import get_data
+from helpers.dim_reduction import get_data_split
 
 args = sys.argv[2:]
 if len(args) >= 3:
@@ -33,15 +33,15 @@ OUT = '{}/../OUTPUT/{}'.format(dir_path, output_dir)
 BASE = '{}/../OUTPUT/{}'.format(dir_path, input_dir)
 
 if '-r' in sys.argv:
-    r = get_data(BASE, "" if len(args) < 2 else args[1], 'r')
-    r_X, r_y = r
+    r = get_data_split(BASE, "" if len(args) < 2 else args[1], 'r')
+    r_train_X, r_test_X, r_train_y, r_test_y = r
 elif '-c' in sys.argv:
-    c = get_data(BASE, "" if len(args) < 2 else args[1], 'c')
-    c_X, c_y = c
+    c = get_data_split(BASE, "" if len(args) < 2 else args[1], 'c')
+    c_train_X, c_test_X, c_train_y, c_test_y = c
 else:
-    r, c = get_data(BASE, "" if len(args) < 2 else args[1])
-    r_X, r_y = r
-    c_X, c_y = c
+    r, c = get_data_split(BASE, "" if len(args) < 2 else args[1])
+    r_train_X, r_test_X, r_train_y, r_test_y = r
+    c_train_X, c_test_X, c_train_y, c_test_y = c
 
 cachedir = mkdtemp()
 memory = Memory(cachedir=cachedir, verbose=10)
@@ -65,34 +65,34 @@ def fit(ignore=None):
     acc = defaultdict(lambda: defaultdict(dict))
     adjMI = defaultdict(lambda: defaultdict(dict))
 
-    def func(X, y, name, it):
+    def func(X_train, X_test, y_train, y_test, name, it):
         km = kmeans(random_state=5)
         gmm = GMM(random_state=5)
         km.set_params(n_clusters=it)
         gmm.set_params(n_components=it)
-        km.fit(X)
-        gmm.fit(X)
+        km.fit(X_train)
+        gmm.fit(X_train)
 
-        file_it(name, 'km', X, y, km.predict(X), it=it)
-        file_it(name, 'gmm', X, y, gmm.predict(X), it=it)
+        file_it(name, 'km', X_train, y_train, km.predict(X_train), it=it)
+        file_it(name, 'gmm', X_train, y_train, gmm.predict(X_train), it=it)
 
-        SSE[it][name] = km.score(X)
-        ll[it][name] = gmm.score(X)
-        acc[it][name]['Kmeans'] = cluster_acc(y, km.predict(X))
-        acc[it][name]['GMM'] = cluster_acc(y, gmm.predict(X))
-        adjMI[it][name]['Kmeans'] = ami(y, km.predict(X))
-        adjMI[it][name]['GMM'] = ami(y, gmm.predict(X))
+        SSE[it][name] = km.score(X_train)
+        ll[it][name] = gmm.score(X_train)
+        acc[it][name]['Kmeans'] = cluster_acc(y_test, km.predict(X_test))
+        acc[it][name]['GMM'] = cluster_acc(y_test, gmm.predict(X_test))
+        adjMI[it][name]['Kmeans'] = ami(y_train, km.predict(X_train))
+        adjMI[it][name]['GMM'] = ami(y_train, gmm.predict(X_train))
         print(it, clock()-st)
 
     threads = []
     if ignore != 'reviews':
         for k in r_clusters:
-            t = Thread(target=func, args=(r_X, r_y, 'reviews', k))
+            t = Thread(target=func, args=(r_train_X, r_test_X, r_train_y, r_test_y, 'reviews', k))
             t.start()
             threads.append(t)
     if ignore != 'cancer':
         for k in c_clusters:
-            t = Thread(target=func, args=(c_X, c_y, 'cancer', k))
+            t = Thread(target=func, args=(c_train_X, c_test_X, c_train_y, c_test_y, 'cancer', k))
             t.start()
             threads.append(t)
 
